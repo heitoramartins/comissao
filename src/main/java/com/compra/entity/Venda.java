@@ -96,12 +96,5 @@ public class Venda {
     public void prePersist() {
         this.data = LocalDateTime.now();
     }
-	
-	@Transient
-	public void calcularTotais(){
-	  	for (Item item : itens) {
-			this.total += item.getQuantidade() * item.getProduto().getVlrUnitario();
-		}
-	}
-	
+			
 }

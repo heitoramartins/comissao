@@ -12,51 +12,57 @@ import com.compra.business.VendaBusines;
 import com.compra.business.exception.VendaNotCreateException;
 import com.compra.entity.Item;
 import com.compra.entity.Venda;
-import com.compra.repository.IItemRepository;
-import com.compra.repository.IVendaRepository;
+import com.compra.jdbc.dao.VendaDAO;
+import com.compra.jdbc.repository.ItemRepository;
+import com.compra.jdbc.repository.VendaRepository;
 
 
 @Component
 public class VendaService {
-			
-	@Autowired
-	private IVendaRepository vendaRepository;
-	
-	@Autowired
-	private IItemRepository itemRepository;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(VendaBusines.class);
+	
+	@Autowired
+	private VendaDAO vendaDAO;
+	
+	@Autowired
+	private VendaRepository vendaRepository;
+	
+	@Autowired
+	private ItemRepository itemRepository;
 	
 	@Transactional
 	public Long salvar(Venda venda){
 		try {
-			venda.calcularTotais();
+			double total = 0;
 			//FIXME: Adicionar Log INFO
-			Venda create = vendaRepository.salvar(venda);
+			Venda create = vendaRepository.save(venda);
 			if(venda.getItens() != null){
 				for (Item item  : venda.getItens()) {
-					 item.setVenda(venda);
-					 //FIXME: Adicionar Log INFO
-					 itemRepository.salvar(item);
+					  item.setVenda(venda);
+					  total += (item.getQuantidade() * item.getProduto().getVlrUnitario());
+					  //FIXME: Adicionar Log INFO
+					  itemRepository.save(item);
 				}
+				//FIXME: Adicionar Log INFO
+		        vendaRepository.updateTotais(total, venda.getId());
 			}
 		  return create.getId();
 		} catch (Exception e) {
 		     //FIXME: Adicionar Log ERROR
 			 throw new VendaNotCreateException("erro ao tentar criar venda!");
-			
 	   }
 	}
 	
 	@Transactional
 	public List<Venda> findVendasById(Long id){
-		List<Venda> vendas = vendaRepository.findVendasById(id);
+		List<Venda> vendas = vendaDAO.findVendasById(id);
 		return vendas;
 	}
 			
 	@Transactional
 	public List<Venda> findAll(){
-		List<Venda> vendas = vendaRepository.findAll();
+		List<Venda> vendas = vendaDAO.findAll();
 		return vendas;
 	}
 	

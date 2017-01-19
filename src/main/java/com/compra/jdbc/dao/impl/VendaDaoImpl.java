@@ -1,20 +1,19 @@
-package com.compra.repository;
+package com.compra.jdbc.dao.impl;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.compra.entity.Item;
 import com.compra.entity.Venda;
+import com.compra.jdbc.dao.VendaDAO;
 
 @Repository
-@Transactional
-public class VendaRepository implements IVendaRepository{
+public class VendaDaoImpl implements VendaDAO{
 
 	@Autowired
 	private EntityManager em;
