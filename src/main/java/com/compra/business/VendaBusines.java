@@ -17,7 +17,7 @@ public class VendaBusines {
 	private VendaService vendaService;
 	
 	public Long salvar(Venda venda){
-		return vendaService.salvar(venda);
+		return vendaService.salvarOrcamento(venda);
 	}
 	
 	public List<Venda> findVendasById(Long id){

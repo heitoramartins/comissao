@@ -33,6 +33,7 @@ public class Produto {
 	
 	@ManyToOne
 	@JoinColumn(name = "fk_categoria")
+	@JsonView(Views.Public.class)
 	private Categoria categoria;
 		
 	public Long getId() {

@@ -14,6 +14,6 @@ public interface VendaRepository extends JpaRepository<Venda, Long>{
 	
 	@Modifying
 	@Query("UPDATE Venda as v SET v.valorTotal = ?1 WHERE v.id = ?2")
-	void updateTotais(BigDecimal total, Long long1);
+	void updateTotais(BigDecimal total, Long id);
 
 }

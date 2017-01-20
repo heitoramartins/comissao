@@ -44,7 +44,7 @@ public class VendaDaoImpl implements VendaDAO{
 	}
 	
 	private List<Item> loadItens(Long id){
-		Query listItens = em.createQuery("select i from Item i inner join fetch i.produto p inner join i.venda v where v.id = :id");
+		Query listItens = em.createQuery("select i from Item i inner join fetch i.produto p inner join fetch p.categoria c inner join fetch i.venda v where v.id = :id");
 		listItens.setParameter("id", id);
 		List<Item> itens =  listItens.getResultList();
 		return itens; 

@@ -1,7 +1,9 @@
 package com.compra.entity;
 
+import java.beans.Transient;
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +22,7 @@ public class Item {
 	@GeneratedValue
 	private Long id;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "fk_produto")
 	@JsonView(Views.Public.class)
 	private Produto produto;
@@ -67,6 +69,14 @@ public class Item {
 	public void setValorUnitario(BigDecimal valorUnitario) {
 		this.valorUnitario = valorUnitario;
 	}
+	@Transient
+	public BigDecimal calculcarTotais(Item item){
+		BigDecimal total = BigDecimal.ZERO;
+		total = total.add(item.getProduto().getVlrUnitario().multiply(new BigDecimal(item.getQuantidade())));
+		return total;
+	}
+	
+	
 		
 	
 }

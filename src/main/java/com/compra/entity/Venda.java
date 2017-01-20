@@ -1,5 +1,6 @@
 package com.compra.entity;
 
+import java.beans.Transient;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -163,11 +164,22 @@ public class Venda {
 		this.enderecoEntrega = enderecoEntrega;
 	}
 	
+	@Transient
+	public boolean isNovo(Venda venda){
+		return venda.getId() == null;
+	}
 	
+	@Transient
+	public BigDecimal calculaFreteMaisDesconto(Venda venda, BigDecimal total){
+	  BigDecimal subtotal = BigDecimal.ZERO;	
+	  subtotal = subtotal.add(total.subtract(venda.getValorDesconto()).add(venda.getValorFrete()));
+	  return subtotal;
+	}
+		
 	@PrePersist
     public void prePersist() {
         this.dataVenda = LocalDateTime.now();
-        this.status = StatusPedido.ORCAMENTO;
+        
     }
 					
 }
