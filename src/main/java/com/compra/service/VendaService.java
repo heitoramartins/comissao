@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import com.compra.entity.enums.StatusPedido;
 import com.compra.jdbc.dao.VendaDAO;
 import com.compra.jdbc.repository.ItemRepository;
 import com.compra.jdbc.repository.VendaRepository;
+import com.compra.service.emissao.Pedido;
 
 
 @Component
@@ -34,6 +36,9 @@ public class VendaService {
 	
 	@Autowired
 	private ItemRepository itemRepository;
+		
+	@Autowired
+	private BeanFactory bf;
 	
 	@Transactional
 	public List<Venda> findVendasById(Long id){
@@ -84,11 +89,18 @@ public class VendaService {
 	
 	
 	@Transactional(rollbackFor = VendaNotUpdateException.class)
-	public Venda alteraOrcamento(Venda venda, Long id) {
+	public void alteraOrcamento(Venda venda, Long id) {
+	
 		try {
-		  	 return  venda.getStatus().getPedido().verificarPedido(venda, id);
-	  	} catch (Exception e) {
-			//FIXME: Adicionar Log ERROR
+		  	   if(venda.getStatus().equals(StatusPedido.ORCAMENTO)){
+		  		   bf.getBean("orcamento", Pedido.class).verificarPedido(venda, id);			
+			   }else if(venda.getStatus().equals(StatusPedido.EMITIDO)){
+				   bf.getBean("emissao", Pedido.class).verificarPedido(venda, id);
+			   }else 
+				   bf.getBean("cancelamento", Pedido.class).verificarPedido(venda, id);
+			  					
+		//FIXME: Adicionar Log ERROR
+		} catch (Exception e) {
 			throw new VendaNotUpdateException("pedido nao pode ser atualizado");
 		}
 		

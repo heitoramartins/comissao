@@ -1,6 +1,5 @@
 package com.compra.entity;
 
-import java.beans.Transient;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -11,7 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.compra.business.exception.QuantidadeEstoqueExcedenteException;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
@@ -31,6 +29,7 @@ public class Produto {
 	private BigDecimal vlrUnitario;
 	
 	@Column(name = "qtde_estoque")
+	@JsonView(Views.Public.class)
 	private Integer quantidadeEstoque;
 	
 	@ManyToOne
@@ -68,24 +67,5 @@ public class Produto {
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
-	
-	@Transient
-	public Integer subtrairEstoque(Integer quantidadeEstoque){
-		if(quantidadeEstoque > this.quantidadeEstoque){
-			throw new QuantidadeEstoqueExcedenteException("Quantidade solicitada excede o estoque!");
-		}
-		Integer total = 0;
-		total = quantidadeEstoque - this.quantidadeEstoque;
-		return total;
-	}	
-	
-	@Transient
-	public Integer estornoEstoque(Integer quantidadeEstoque){
-		Integer total = 0;
-		total = quantidadeEstoque + this.quantidadeEstoque;
-		return total;
-	}	
 		
-	
-	
 	}

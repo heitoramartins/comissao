@@ -3,8 +3,8 @@ package com.compra.service.emissao;
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.compra.business.exception.ValorTotalMenorQueZero;
 import com.compra.entity.Item;
@@ -13,6 +13,7 @@ import com.compra.jdbc.repository.ItemRepository;
 import com.compra.jdbc.repository.VendaRepository;
 
 @Component(value="orcamento")
+@Configurable
 public class Orcamento implements Pedido {
 	
 	@Autowired
@@ -27,7 +28,8 @@ public class Orcamento implements Pedido {
 		
 		 BigDecimal total = BigDecimal.ZERO;	
 		 BigDecimal subtotal = BigDecimal.ZERO;
-				
+		 //FIXME: Adicionar Log INFO
+		 Venda v = vendaRepository.findOne(id);	 		
 		 for (Item item  : venda.getItens()) {
 					  item.setVenda(venda);
 					  item.setValorUnitario(item.getProduto().getVlrUnitario());
@@ -40,8 +42,7 @@ public class Orcamento implements Pedido {
 			 throw new ValorTotalMenorQueZero("A lista de orcamentos deve comter amo menos um item");
 		  }
 				
-				 //FIXME: Adicionar Log INFO
-				 Venda v = vendaRepository.findOne(id);	 
+				
 				 v.setValorTotal(subtotal);					
 				 v.setEnderecoEntrega(venda.getEnderecoEntrega());					 
 				 v.setCliente(venda.getCliente());
