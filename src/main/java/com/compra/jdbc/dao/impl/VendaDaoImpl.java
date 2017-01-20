@@ -32,7 +32,7 @@ public class VendaDaoImpl implements VendaDAO{
 		
 	@Override
 	public List<Venda> findVendasById(Long id) {
-		Query listVendas = em.createQuery("SELECT v FROM Venda v inner join fetch v.cliente c inner join fetch v.funcionario f where v.id = :id");
+		Query listVendas = em.createQuery("SELECT v FROM Venda v inner join fetch v.cliente c inner join fetch v.usuario u where v.id = :id");
 		listVendas.setParameter("id", id);
 		List<Venda> vendas = listVendas.getResultList();
 		

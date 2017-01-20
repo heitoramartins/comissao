@@ -1,5 +1,7 @@
 package com.compra.entity;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,7 +31,10 @@ public class Item {
 	
 	@Column(name = "quantidade")
 	@JsonView(Views.Public.class)
-	private int quantidade;
+	private Integer quantidade;
+	
+	@Column(name = "vlr_unitario")
+	private BigDecimal valorUnitario = BigDecimal.ZERO;
 			
 	public Long getId() {
 		return id;
@@ -43,19 +48,25 @@ public class Item {
 	public void setProduto(Produto produto) {
 		this.produto = produto;
 	}
-	public int getQuantidade() {
+		
+	public Integer getQuantidade() {
 		return quantidade;
 	}
-	public void setQuantidade(int quantidade) {
+	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
 	}
-	
 	public Venda getVenda() {
 		return venda;
 	}
 	public void setVenda(Venda venda) {
 		this.venda = venda;
 	}
-	 	
+	public BigDecimal getValorUnitario() {
+		return valorUnitario;
+	}
+	public void setValorUnitario(BigDecimal valorUnitario) {
+		this.valorUnitario = valorUnitario;
+	}
+		
 	
 }

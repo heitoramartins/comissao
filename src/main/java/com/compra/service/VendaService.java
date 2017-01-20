@@ -1,5 +1,6 @@
 package com.compra.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -34,13 +35,13 @@ public class VendaService {
 	@Transactional
 	public Long salvar(Venda venda){
 		try {
-			double total = 0;
+			BigDecimal total = BigDecimal.ZERO;
 			//FIXME: Adicionar Log INFO
 			Venda create = vendaRepository.save(venda);
 			if(venda.getItens() != null){
 				for (Item item  : venda.getItens()) {
 					  item.setVenda(venda);
-					  total += (item.getQuantidade() * item.getProduto().getVlrUnitario());
+					  total = item.getValorUnitario().multiply(new BigDecimal(item.getQuantidade()));
 					  //FIXME: Adicionar Log INFO
 					  itemRepository.save(item);
 				}

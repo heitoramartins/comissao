@@ -1,10 +1,14 @@
 package com.compra.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -13,11 +17,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
 
 import com.compra.converter.CustomLocalDateTimeDeserialize;
 import com.compra.converter.CustomLocalDateTimeSerializer;
+import com.compra.entity.enums.FormaPagamento;
+import com.compra.entity.enums.StatusPedido;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -41,16 +45,42 @@ public class Venda {
 	
 	@JsonSerialize(using = CustomLocalDateTimeSerializer.class)
     @JsonDeserialize(using = CustomLocalDateTimeDeserialize.class)
-    private LocalDateTime data;
+	@JsonView(Views.Public.class)
+    private LocalDateTime dataVenda;
 	
-	@ManyToOne(targetEntity = Funcionario.class)
+	@JsonSerialize(using = CustomLocalDateTimeSerializer.class)
+    @JsonDeserialize(using = CustomLocalDateTimeDeserialize.class)
+	@JsonView(Views.Public.class)
+    private LocalDateTime dataEntrega;
+	
+	@ManyToOne(targetEntity = Usuario.class)
 	@JoinColumn(name = "fk_funcionario")
 	@JsonView(Views.Public.class)
-	private Funcionario funcionario;
+	private Usuario usuario;
 	
-	@Column(name = "total")
+	@Column(name = "vlr_total")
 	@JsonView(Views.Public.class)
-	private Double total;
+	private BigDecimal valorTotal = BigDecimal.ZERO;
+	
+	@Column(name = "vlr_frete")
+	@JsonView(Views.Public.class)
+	private BigDecimal valorFrete = BigDecimal.ZERO;
+	
+	@Column(name = "vlr_desconto")
+	@JsonView(Views.Public.class)
+	private BigDecimal valorDesconto = BigDecimal.ZERO;
+	
+	@Enumerated(EnumType.STRING)
+	@JsonView(Views.Public.class)
+	private StatusPedido status = StatusPedido.ORCAMENTO;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "forma_pagamento",length = 20)
+	@JsonView(Views.Public.class)
+	private FormaPagamento formaPagamento;
+	
+	@Embedded
+	private EnderecoEntrega enderecoEntrega;
 		
 	public Long getId() {
 		return id;
@@ -70,31 +100,74 @@ public class Venda {
 	public void setItens(List<Item> itens) {
 		this.itens = itens;
 	}
+		
+	public LocalDateTime getDataVenda() {
+		return dataVenda;
+	}
+	public void setDataVenda(LocalDateTime dataVenda) {
+		this.dataVenda = dataVenda;
+	}
+	public Usuario getUsuario() {
+		return usuario;
+	}
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+	public Usuario getFuncionario() {
+		return usuario;
+	}
+	public void setFuncionario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+		
+	public LocalDateTime getDataEntrega() {
+		return dataEntrega;
+	}
+	public void setDataEntrega(LocalDateTime dataEntrega) {
+		this.dataEntrega = dataEntrega;
+	}
+	public BigDecimal getValorTotal() {
+		return valorTotal;
+	}
+	public void setValorTotal(BigDecimal valorTotal) {
+		this.valorTotal = valorTotal;
+	}
+	public BigDecimal getValorFrete() {
+		return valorFrete;
+	}
+	public void setValorFrete(BigDecimal valorFrete) {
+		this.valorFrete = valorFrete;
+	}
+	public BigDecimal getValorDesconto() {
+		return valorDesconto;
+	}
+	public void setValorDesconto(BigDecimal valorDesconto) {
+		this.valorDesconto = valorDesconto;
+	}
+	public StatusPedido getStatus() {
+		return status;
+	}
+	public void setStatus(StatusPedido status) {
+		this.status = status;
+	}
+	public FormaPagamento getFormaPagamento() {
+		return formaPagamento;
+	}
+	public void setFormaPagamento(FormaPagamento formaPagamento) {
+		this.formaPagamento = formaPagamento;
+	}
+	public EnderecoEntrega getEnderecoEntrega() {
+		return enderecoEntrega;
+	}
+	public void setEnderecoEntrega(EnderecoEntrega enderecoEntrega) {
+		this.enderecoEntrega = enderecoEntrega;
+	}
 	
-	public LocalDateTime getData() {
-		return data;
-	}
-	public void setData(LocalDateTime data) {
-		this.data = data;
-	}
-	public Funcionario getFuncionario() {
-		return funcionario;
-	}
-	public void setFuncionario(Funcionario funcionario) {
-		this.funcionario = funcionario;
-	}
-			
-	public Double getTotal() {
-		return total;
-	}
-	
-	public void setTotal(Double total) {
-		this.total = total;
-	}
 	
 	@PrePersist
     public void prePersist() {
-        this.data = LocalDateTime.now();
+        this.dataVenda = LocalDateTime.now();
+        this.status = StatusPedido.ORCAMENTO;
     }
-			
+					
 }
