@@ -49,6 +49,14 @@ public class VendaDaoImpl implements VendaDAO{
 		List<Item> itens =  listItens.getResultList();
 		return itens; 
 	}
+
+	@Override
+	public Venda findById(Long id) {
+		Query vendaQuery = em.createQuery("SELECT v FROM Venda v inner join fetch v.cliente c inner join fetch v.usuario u where v.id = :id");
+		vendaQuery.setParameter("id", id);
+		Venda venda  = (Venda) vendaQuery.getSingleResult();
+    	return venda;
+	}
 	
 	
 }

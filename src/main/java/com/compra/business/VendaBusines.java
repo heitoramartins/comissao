@@ -29,5 +29,10 @@ public class VendaBusines {
 		List<Venda> vendas = vendaService.findAll();
 		return vendas;
 	}
+
+	public void alteraOrcamento(Venda venda, Long id) {
+		vendaService.alteraOrcamento(venda, id);
+		
+	}
 	
 }

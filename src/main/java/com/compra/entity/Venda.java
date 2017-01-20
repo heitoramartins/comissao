@@ -33,6 +33,7 @@ public class Venda {
 	
 	@Id
 	@GeneratedValue
+	@JsonView(Views.Public.class)
 	private Long id;
 	
 	@ManyToOne(targetEntity = Cliente.class)
@@ -81,6 +82,7 @@ public class Venda {
 	private FormaPagamento formaPagamento;
 	
 	@Embedded
+	@JsonView(Views.Public.class)
 	private EnderecoEntrega enderecoEntrega;
 		
 	public Long getId() {
@@ -168,12 +170,17 @@ public class Venda {
 	public boolean isNovo(Venda venda){
 		return venda.getId() == null;
 	}
-	
+		
 	@Transient
 	public BigDecimal calculaFreteMaisDesconto(Venda venda, BigDecimal total){
 	  BigDecimal subtotal = BigDecimal.ZERO;	
 	  subtotal = subtotal.add(total.subtract(venda.getValorDesconto()).add(venda.getValorFrete()));
 	  return subtotal;
+	}
+	
+	@Transient
+	public boolean isValorMenorQueZero(BigDecimal valor){
+		return valor.compareTo(BigDecimal.ZERO) < 0;
 	}
 		
 	@PrePersist
@@ -181,5 +188,6 @@ public class Venda {
         this.dataVenda = LocalDateTime.now();
         
     }
+	
 					
 }

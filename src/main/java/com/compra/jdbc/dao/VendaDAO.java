@@ -9,5 +9,8 @@ public interface VendaDAO {
 	Venda salvar(Venda venda);
 	List<Venda> findVendasById(Long id);
 	List<Venda> findAll();
+    Venda findById(Long id);
+		
+	
 	
 }

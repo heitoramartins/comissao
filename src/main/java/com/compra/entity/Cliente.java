@@ -23,6 +23,7 @@ public class Cliente {
 	
 	@Id
 	@GeneratedValue
+	@JsonView(Views.Public.class)
 	private Long id;
 	
 	@Column(name = "nome")
@@ -38,17 +39,21 @@ public class Cliente {
 	private String cnpj;
 	
 	@Column(name = "email")
+	@JsonView(Views.Public.class)
 	private String email;
 	
 	@Column(name = "doc_receita_federal")
+	@JsonView(Views.Public.class)
 	private String documentoReceitaFederal;
 	
 	
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 10)
+	@JsonView(Views.Public.class)
 	private TipoPessoa tipo;
 	
 	@OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+	@JsonView(Views.Public.class)
 	private List<Endereco> enderecos = new ArrayList<>();
 	
 	

@@ -3,7 +3,6 @@ package com.compra.entity;
 import java.beans.Transient;
 import java.math.BigDecimal;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,9 +19,10 @@ public class Item {
 	
 	@Id
 	@GeneratedValue
+	@JsonView(Views.Public.class)
 	private Long id;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "fk_produto")
 	@JsonView(Views.Public.class)
 	private Produto produto;

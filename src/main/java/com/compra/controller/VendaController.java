@@ -21,7 +21,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.compra.business.VendaBusines;
 import com.compra.entity.Venda;
 import com.compra.entity.Views;
-import com.compra.service.VendaService;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @RestController
@@ -30,12 +29,9 @@ public class VendaController {
 	
 	    @Autowired
 	    private VendaBusines vendaBusiness;
-	    
-	    @Autowired
-	    private VendaService vendaService;
-	
+	  	  	
 	    @RequestMapping(method = RequestMethod.POST)
-	    public ResponseEntity criarVenda(
+	    public ResponseEntity salvarOrcamento(
 	        @RequestBody Venda venda,UriComponentsBuilder uriComponentsBuilder) {
 	        Long id = vendaBusiness.salvar(venda);
 
@@ -46,6 +42,16 @@ public class VendaController {
 	                .toUri());
 	        return new ResponseEntity(headers, CREATED);
 	    }
+	    
+	    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	    public ResponseEntity alterarOrcamento(
+	            @PathVariable("id") Long id,
+	            @RequestBody Venda venda) {
+	            //FIXME: Validar campos da venda
+	    	    vendaBusiness.alteraOrcamento(venda,id);
+         return new ResponseEntity(OK);
+	    }
+	    
 	    
 	    @JsonView(Views.Public.class)
 	    @RequestMapping(value = "/{id}", method = RequestMethod.GET)

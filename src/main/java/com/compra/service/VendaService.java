@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.compra.business.VendaBusines;
+import com.compra.business.exception.ValorTotalMenorQueZero;
 import com.compra.business.exception.VendaNotCreateException;
+import com.compra.business.exception.VendaNotUpdateException;
 import com.compra.entity.Item;
 import com.compra.entity.Venda;
 import com.compra.entity.enums.StatusPedido;
@@ -66,6 +68,10 @@ public class VendaService {
 					 				  	
 				}
 				 subtotal = subtotal.add(venda.calculaFreteMaisDesconto(venda, total));
+					 if(venda.isValorMenorQueZero(subtotal)){
+					 throw new ValorTotalMenorQueZero("A lista de orcamentos deve comter amo menos um item");
+				 }
+				 
 				 //FIXME: Adicionar Log INFO
 				 vendaRepository.updateTotais(subtotal, venda.getId());
 			}
@@ -75,7 +81,17 @@ public class VendaService {
 			 throw new VendaNotCreateException("erro ao tentar criar venda!");
 	   }
 	}
+	
+	
+	@Transactional(rollbackFor = VendaNotUpdateException.class)
+	public Venda alteraOrcamento(Venda venda, Long id) {
+		try {
+		  	 return  venda.getStatus().getPedido().verificarPedido(venda, id);
+	  	} catch (Exception e) {
+			//FIXME: Adicionar Log ERROR
+			throw new VendaNotUpdateException("pedido nao pode ser atualizado");
+		}
 		
-		
+	}
 	
 }

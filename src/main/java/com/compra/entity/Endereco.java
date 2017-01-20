@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 @Entity
 @Table(name = "endereco")
 public class Endereco{
@@ -17,21 +19,27 @@ public class Endereco{
 	private Long id;
 	
 	@Column(name="logradouro")
+	@JsonView(Views.Public.class)
 	private String logradouro;
 	
 	@Column(name="numero")
+	@JsonView(Views.Public.class)
 	private String numero;
 	
 	@Column(name="complemento")
+	@JsonView(Views.Public.class)
 	private String complemento;
 	
 	@Column(name="cidade")
+	@JsonView(Views.Public.class)
 	private String cidade;
 	
 	@Column(name="uf")
+	@JsonView(Views.Public.class)
 	private String uf;
 	
 	@Column(name="cep")
+	@JsonView(Views.Public.class)
 	private String cep;
 	
 	@ManyToOne
