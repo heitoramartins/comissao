@@ -1,32 +1,29 @@
 package com.compra.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.compra.business.VendaBusines;
 import com.compra.business.exception.ValorTotalMenorQueZero;
 import com.compra.business.exception.VendaNotCreateException;
 import com.compra.business.exception.VendaNotUpdateException;
 import com.compra.entity.Item;
 import com.compra.entity.Venda;
+import com.compra.entity.enums.StatusDesconto;
 import com.compra.entity.enums.StatusPedido;
 import com.compra.jdbc.dao.VendaDAO;
 import com.compra.jdbc.repository.ItemRepository;
 import com.compra.jdbc.repository.VendaRepository;
-import com.compra.service.emissao.Pedido;
+import com.compra.service.status.pedido.Pedido;
 
 
 @Component
 public class VendaService {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(VendaBusines.class);
 	
 	@Autowired
 	private VendaDAO vendaDAO;
@@ -55,10 +52,11 @@ public class VendaService {
 	@Transactional
 	public Long salvarOrcamento(Venda venda){
 		BigDecimal total = BigDecimal.ZERO;	
-		BigDecimal subtotal = BigDecimal.ZERO;	
+		BigDecimal totalCalculadoFreteMaisDescnto = BigDecimal.ZERO;	
 		try {
 			if(venda.isNovo(venda)){
 				venda.setStatus(StatusPedido.ORCAMENTO);
+				venda.setStatusDesconto(StatusDesconto.EM_APROVACAO);
 			}
 		    //FIXME: Adicionar Log INFO
 			Venda create = vendaRepository.save(venda);
@@ -72,38 +70,38 @@ public class VendaService {
 					  itemRepository.save(item);
 					 				  	
 				}
-				 subtotal = subtotal.add(venda.calculaFreteMaisDesconto(venda, total));
-					 if(venda.isValorMenorQueZero(subtotal)){
+					 venda.setValorTotal(total);							 				
+				     totalCalculadoFreteMaisDescnto = venda.calculaFreteMaisDescontoExtra(venda, venda.getValorTotal());
+					 if(venda.isValorMenorQueZero(totalCalculadoFreteMaisDescnto)){
 					 throw new ValorTotalMenorQueZero("A lista de orcamentos deve comter amo menos um item");
 				 }
 				 
 				 //FIXME: Adicionar Log INFO
-				 vendaRepository.updateTotais(subtotal, venda.getId());
+				 vendaRepository.updateTotais(totalCalculadoFreteMaisDescnto, venda.getId());
 			}
 		  return create.getId();
 		} catch (Exception e) {
 		     //FIXME: Adicionar Log ERROR
-			 throw new VendaNotCreateException("erro ao tentar criar venda!");
+			 throw new VendaNotCreateException("erro ao tentar criar venda!" +e.getMessage());
 	   }
 	}
-	
-	
+		
 	@Transactional(rollbackFor = VendaNotUpdateException.class)
 	public void alteraOrcamento(Venda venda, Long id) {
 	
 		try {
-		  	   if(venda.getStatus().equals(StatusPedido.ORCAMENTO)){
+			 if(venda.getStatus().equals(StatusPedido.ORCAMENTO)){
 		  		   bf.getBean("orcamento", Pedido.class).verificarPedido(venda, id);			
-			   }else if(venda.getStatus().equals(StatusPedido.EMITIDO)){
+			 }else if(venda.getStatus().equals(StatusPedido.EMITIDO)){
 				   bf.getBean("emissao", Pedido.class).verificarPedido(venda, id);
-			   }else 
+			 }else{
 				   bf.getBean("cancelamento", Pedido.class).verificarPedido(venda, id);
+			 }
 			  					
 		//FIXME: Adicionar Log ERROR
 		} catch (Exception e) {
-			throw new VendaNotUpdateException("pedido nao pode ser atualizado");
+			throw new VendaNotUpdateException("pedido nao pode ser atualizado" +e.getMessage());
 		}
-		
 	}
-	
+				
 }

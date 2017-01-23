@@ -1,6 +1,5 @@
 package com.compra.entity;
 
-import java.beans.Transient;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -10,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonView;
 

@@ -1,7 +1,8 @@
 package com.compra.entity;
 
-import java.beans.Transient;
+
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,11 +19,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.compra.converter.CustomLocalDateTimeDeserialize;
 import com.compra.converter.CustomLocalDateTimeSerializer;
 import com.compra.entity.enums.FormaPagamento;
+import com.compra.entity.enums.StatusDesconto;
 import com.compra.entity.enums.StatusPedido;
+import com.compra.service.status.desconto.Desconto;
+import com.compra.service.status.desconto.EmAprovacao;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -77,6 +82,11 @@ public class Venda {
 	private StatusPedido status = StatusPedido.ORCAMENTO;
 	
 	@Enumerated(EnumType.STRING)
+	@JsonView(Views.Public.class)
+	@Column(name = "status_desconto")
+	private StatusDesconto statusDesconto = StatusDesconto.EM_APROVACAO;
+	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "forma_pagamento",length = 20)
 	@JsonView(Views.Public.class)
 	private FormaPagamento formaPagamento;
@@ -84,6 +94,13 @@ public class Venda {
 	@Embedded
 	@JsonView(Views.Public.class)
 	private EnderecoEntrega enderecoEntrega;
+	
+	@Transient
+	public Desconto desconto;
+	
+	public Venda() {
+	    desconto = new EmAprovacao();
+	}
 		
 	public Long getId() {
 		return id;
@@ -165,23 +182,49 @@ public class Venda {
 	public void setEnderecoEntrega(EnderecoEntrega enderecoEntrega) {
 		this.enderecoEntrega = enderecoEntrega;
 	}
-	
+			
+	public StatusDesconto getStatusDesconto() {
+		return statusDesconto;
+	}
+	public void setStatusDesconto(StatusDesconto statusDesconto) {
+		this.statusDesconto = statusDesconto;
+	}
 	@Transient
 	public boolean isNovo(Venda venda){
 		return venda.getId() == null;
 	}
-		
+	
 	@Transient
-	public BigDecimal calculaFreteMaisDesconto(Venda venda, BigDecimal total){
-	  BigDecimal subtotal = BigDecimal.ZERO;	
-	  subtotal = subtotal.add(total.subtract(venda.getValorDesconto()).add(venda.getValorFrete()));
-	  return subtotal;
+	public BigDecimal calculaFreteMaisDescontoExtra(Venda venda, BigDecimal total){
+		   BigDecimal desconto = BigDecimal.ZERO;
+		   desconto = venda.aplicaDescontoExtra(); 
+		   venda.setValorDesconto(desconto);
+		   total = total.add(total.subtract(venda.getValorDesconto()).add(venda.getValorFrete()));
+		   return total.setScale(2, RoundingMode.UP);//arredondas casas decimais
 	}
 	
 	@Transient
 	public boolean isValorMenorQueZero(BigDecimal valor){
 		return valor.compareTo(BigDecimal.ZERO) < 0;
 	}
+	 
+	 @Transient
+	 public BigDecimal aplicaDescontoExtra(){
+		return desconto.aplicarDescontoExtra(this);
+	 }
+	
+	 @Transient
+	 public void aprovar(){
+		 desconto.aprovar(this);
+	 }
+	 @Transient
+	 public void reprovar(){
+		 desconto.reprovar(this);
+	 }
+	 @Transient
+	 public void finalizar(){
+		 desconto.finalizar(this);
+	 }
 		
 	@PrePersist
     public void prePersist() {
