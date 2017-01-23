@@ -3,22 +3,22 @@ package com.compra.service.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import com.compra.entity.Venda;
+import com.compra.entity.Pedido;
 
 
 
-public class VendaValidation implements ConstraintValidator<VendaConstraint, Venda> {
+public class VendaValidation implements ConstraintValidator<VendaConstraint, Pedido> {
 
     @Override
     public void initialize(VendaConstraint annotation) {}
 
     @Override
-    public boolean isValid(Venda venda, ConstraintValidatorContext context) {
+    public boolean isValid(Pedido pedido, ConstraintValidatorContext context) {
 
-        return validateMap(venda, context);
+        return validateMap(pedido, context);
     }
 
-   private boolean validateMap(Venda venda, ConstraintValidatorContext context) {
+   private boolean validateMap(Pedido pedido, ConstraintValidatorContext context) {
 	   /* 
         boolean valid = true;
 

@@ -27,9 +27,9 @@ public class Item {
 	@JsonView(Views.Public.class)
 	private Produto produto;
 	
-	@ManyToOne(targetEntity = Venda.class)
-	@JoinColumn(name = "fk_venda")
-	private Venda venda;
+	@ManyToOne(targetEntity = Pedido.class)
+	@JoinColumn(name = "fk_pedido")
+	private Pedido pedido;
 	
 	@Column(name = "quantidade")
 	@JsonView(Views.Public.class)
@@ -57,11 +57,12 @@ public class Item {
 	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
 	}
-	public Venda getVenda() {
-		return venda;
+	
+	public Pedido getPedido() {
+		return pedido;
 	}
-	public void setVenda(Venda venda) {
-		this.venda = venda;
+	public void setPedido(Pedido pedido) {
+		this.pedido = pedido;
 	}
 	public BigDecimal getValorUnitario() {
 		return valorUnitario;

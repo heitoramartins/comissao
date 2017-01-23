@@ -1,7 +1,6 @@
 package com.compra.service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 import org.springframework.beans.factory.BeanFactory;
@@ -13,23 +12,23 @@ import com.compra.business.exception.ValorTotalMenorQueZero;
 import com.compra.business.exception.VendaNotCreateException;
 import com.compra.business.exception.VendaNotUpdateException;
 import com.compra.entity.Item;
-import com.compra.entity.Venda;
+import com.compra.entity.Pedido;
 import com.compra.entity.enums.StatusDesconto;
 import com.compra.entity.enums.StatusPedido;
-import com.compra.jdbc.dao.VendaDAO;
+import com.compra.jdbc.dao.PedidoDAO;
 import com.compra.jdbc.repository.ItemRepository;
-import com.compra.jdbc.repository.VendaRepository;
-import com.compra.service.status.pedido.Pedido;
+import com.compra.jdbc.repository.PedidoRepository;
+import com.compra.service.status.pedido.NivelPedido;
 
 
 @Component
-public class VendaService {
+public class PedidoService {
 	
 	@Autowired
-	private VendaDAO vendaDAO;
+	private PedidoDAO pedidoDAO;
 	
 	@Autowired
-	private VendaRepository vendaRepository;
+	private PedidoRepository pedidoRepository;
 	
 	@Autowired
 	private ItemRepository itemRepository;
@@ -38,46 +37,45 @@ public class VendaService {
 	private BeanFactory bf;
 	
 	@Transactional
-	public List<Venda> findVendasById(Long id){
-		List<Venda> vendas = vendaDAO.findVendasById(id);
-		return vendas;
+	public List<Pedido> findVendasById(Long id){
+		List<Pedido> pedidos = pedidoDAO.findVendasById(id);
+		return pedidos;
 	}
 			
 	@Transactional
-	public List<Venda> findAll(){
-		List<Venda> vendas = vendaDAO.findAll();
-		return vendas;
+	public List<Pedido> findAll(){
+		List<Pedido> pedidos = pedidoDAO.findAll();
+		return pedidos;
 	}
 	
 	@Transactional
-	public Long salvarOrcamento(Venda venda){
+	public Long salvarOrcamento(Pedido pedido){
 		BigDecimal total = BigDecimal.ZERO;	
-		BigDecimal totalCalculadoFreteMaisDescnto = BigDecimal.ZERO;	
+		BigDecimal totalCalculadoFreteMaisDesconto = BigDecimal.ZERO;	
 		try {
-			if(venda.isNovo(venda)){
-				venda.setStatus(StatusPedido.ORCAMENTO);
-				venda.setStatusDesconto(StatusDesconto.EM_APROVACAO);
+			if(pedido.isNovo(pedido)){
+				pedido.setStatus(StatusPedido.ORCAMENTO);
+				pedido.setStatusDesconto(StatusDesconto.EM_APROVACAO);
 			}
 		    //FIXME: Adicionar Log INFO
-			Venda create = vendaRepository.save(venda);
+			Pedido create = pedidoRepository.save(pedido);
 			
-			if(venda.getItens() != null){
-				for (Item item  : venda.getItens()) {
-					  item.setVenda(venda);
+			if(pedido.getItens() != null){
+				for (Item item  : pedido.getItens()) {
+					  item.setPedido(pedido);
 					  item.setValorUnitario(item.getProduto().getVlrUnitario());
 					  total = total.add(item.calculcarTotais(item));
 					  //FIXME: Adicionar Log INFO
 					  itemRepository.save(item);
 					 				  	
 				}
-					 venda.setValorTotal(total);							 				
-				     totalCalculadoFreteMaisDescnto = venda.calculaFreteMaisDescontoExtra(venda, venda.getValorTotal());
-					 if(venda.isValorMenorQueZero(totalCalculadoFreteMaisDescnto)){
+				     totalCalculadoFreteMaisDesconto = pedido.calculaFreteMaisDesconto(pedido, total);
+					 if(pedido.isValorMenorQueZero(totalCalculadoFreteMaisDesconto)){
 					 throw new ValorTotalMenorQueZero("A lista de orcamentos deve comter amo menos um item");
-				 }
-				 
+				}
+								 
 				 //FIXME: Adicionar Log INFO
-				 vendaRepository.updateTotais(totalCalculadoFreteMaisDescnto, venda.getId());
+				 pedidoRepository.updateTotais(totalCalculadoFreteMaisDesconto, pedido.getId());
 			}
 		  return create.getId();
 		} catch (Exception e) {
@@ -87,15 +85,15 @@ public class VendaService {
 	}
 		
 	@Transactional(rollbackFor = VendaNotUpdateException.class)
-	public void alteraOrcamento(Venda venda, Long id) {
+	public void alteraOrcamento(Pedido pedido, Long id) {
 	
 		try {
-			 if(venda.getStatus().equals(StatusPedido.ORCAMENTO)){
-		  		   bf.getBean("orcamento", Pedido.class).verificarPedido(venda, id);			
-			 }else if(venda.getStatus().equals(StatusPedido.EMITIDO)){
-				   bf.getBean("emissao", Pedido.class).verificarPedido(venda, id);
+			 if(pedido.getStatus().equals(StatusPedido.ORCAMENTO)){
+		  		   bf.getBean("orcamento", NivelPedido.class).verificarPedido(pedido, id);			
+			 }else if(pedido.getStatus().equals(StatusPedido.EMITIDO)){
+				   bf.getBean("emissao", NivelPedido.class).verificarPedido(pedido, id);
 			 }else{
-				   bf.getBean("cancelamento", Pedido.class).verificarPedido(venda, id);
+				   bf.getBean("cancelamento", NivelPedido.class).verificarPedido(pedido, id);
 			 }
 			  					
 		//FIXME: Adicionar Log ERROR

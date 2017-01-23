@@ -8,48 +8,48 @@ import org.springframework.stereotype.Component;
 
 import com.compra.business.exception.ValorTotalMenorQueZero;
 import com.compra.entity.Item;
-import com.compra.entity.Venda;
+import com.compra.entity.Pedido;
 import com.compra.jdbc.repository.ItemRepository;
-import com.compra.jdbc.repository.VendaRepository;
+import com.compra.jdbc.repository.PedidoRepository;
 
 @Component(value="orcamento")
 @Configurable
-public class Orcamento implements Pedido {
+public class Orcamento implements NivelPedido {
 	
 	@Autowired
-	private VendaRepository vendaRepository;
+	private PedidoRepository pedidoRepository;
 	
 	@Autowired
 	private ItemRepository itemRepository;	
 
 	@Override
-	public Venda verificarPedido(Venda venda,Long id) {
+	public Pedido verificarPedido(Pedido pedido,Long id) {
 			BigDecimal total = BigDecimal.ZERO;	
-			BigDecimal subtotal = BigDecimal.ZERO;
+			BigDecimal totalCalculadoFreteMaisDescnto = BigDecimal.ZERO;
 			//FIXME: Adicionar Log INFO
-			Venda v = vendaRepository.findOne(id);	 		
-			for (Item item  : venda.getItens()) {
-				item.setVenda(venda);
+			Pedido v = pedidoRepository.findOne(id);	 		
+			for (Item item  : pedido.getItens()) {
+				item.setPedido(pedido);
 				item.setValorUnitario(item.getProduto().getVlrUnitario());
 				total = total.add(item.calculcarTotais(item));
 				//FIXME: Adicionar Log INFO
 				itemRepository.save(item);
 			}
-			/*subtotal = subtotal.add(venda.calculaFreteMaisDesconto(venda, total));
-			if(venda.isValorMenorQueZero(subtotal)){
-				throw new ValorTotalMenorQueZero("A lista de orcamentos deve comter amo menos um item");
-			}*/
-			
-			v.setValorTotal(subtotal);					
-			v.setEnderecoEntrega(venda.getEnderecoEntrega());					 
-			v.setCliente(venda.getCliente());
-			v.setUsuario(venda.getUsuario());
-			v.setValorDesconto(venda.getValorDesconto());
-			v.setValorFrete(venda.getValorFrete());
-			v.setFormaPagamento(venda.getFormaPagamento());
+			totalCalculadoFreteMaisDescnto = pedido.calculaFreteMaisDesconto(pedido, total);
+			if(pedido.isValorMenorQueZero(totalCalculadoFreteMaisDescnto)){
+			    throw new ValorTotalMenorQueZero("A lista de orcamentos deve comter amo menos um item");
+		    }
+		 			
+			v.setValorTotal(totalCalculadoFreteMaisDescnto);					
+			v.setEnderecoEntrega(pedido.getEnderecoEntrega());					 
+			v.setCliente(pedido.getCliente());
+			v.setUsuario(pedido.getUsuario());
+			v.setValorDesconto(pedido.calculaFreteMaisDesconto(pedido, pedido.getValorTotal()));
+			v.setValorFrete(pedido.getValorFrete());
+			v.setFormaPagamento(pedido.getFormaPagamento());
 			
 			//FIXME: Adicionar Log INFO
-			return vendaRepository.save(v);
+			return pedidoRepository.save(v);
 	
 	  }
 }

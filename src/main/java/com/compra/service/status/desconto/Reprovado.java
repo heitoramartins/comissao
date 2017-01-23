@@ -2,26 +2,26 @@ package com.compra.service.status.desconto;
 
 import java.math.BigDecimal;
 
-import com.compra.business.exception.StatusInvalidoException;
-import com.compra.entity.Venda;
+import com.compra.business.exception.StatusInvalidoParaDescontoException;
+import com.compra.entity.Pedido;
 
 public class Reprovado implements Desconto{
 	
 	@Override
-	public BigDecimal aplicarDescontoExtra(Venda venda) {
-		throw new StatusInvalidoException("Pedido esta reprovado");
+	public BigDecimal aplicarDescontoExtra(Pedido pedido) {
+		throw new StatusInvalidoParaDescontoException("Pedido esta reprovado");
 	}
 	@Override
-	public void aprovar(Venda venda) {
-		throw new StatusInvalidoException("Pedido esta reprovado");
+	public void aprovar(Pedido pedido) {
+		throw new StatusInvalidoParaDescontoException("Pedido esta reprovado");
 	}
 	@Override
-	public void reprovar(Venda venda) {
-		throw new StatusInvalidoException("Pedido esta reprovado");
+	public void reprovar(Pedido pedido) {
+		throw new StatusInvalidoParaDescontoException("Pedido esta reprovado");
     }
 	@Override
-	public void finalizar(Venda venda) {
-		venda.desconto = new Finalizado();
+	public void finalizar(Pedido pedido) {
+		pedido.desconto = new Finalizado();
 		
 	}
 

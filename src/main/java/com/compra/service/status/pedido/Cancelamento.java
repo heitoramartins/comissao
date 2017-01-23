@@ -6,27 +6,27 @@ import org.springframework.stereotype.Component;
 
 import com.compra.entity.Item;
 import com.compra.entity.Produto;
-import com.compra.entity.Venda;
+import com.compra.entity.Pedido;
 import com.compra.entity.enums.StatusPedido;
 import com.compra.jdbc.repository.ProdutoRepository;
-import com.compra.jdbc.repository.VendaRepository;
+import com.compra.jdbc.repository.PedidoRepository;
 
 @Component(value="cancelamento")
 @Configurable
-public class Cancelamento implements Pedido{
+public class Cancelamento implements NivelPedido{
 
 	@Autowired
-	private VendaRepository vendaRepository;
+	private PedidoRepository pedidoRepository;
 		
 	@Autowired
 	private ProdutoRepository produtoRepository;
 
 	@Override
-	public Venda verificarPedido(Venda venda, Long id) {
+	public Pedido verificarPedido(Pedido pedido, Long id) {
 					
-			Venda v = vendaRepository.findOne(id);
+			Pedido v = pedidoRepository.findOne(id);
 			//fazer logica para estornar o estoque
-			for (Item item : venda.getItens()) {
+			/*for (Item item : pedido.getItens()) {
 					// estorno no estoque
 					Integer total = 0;
 					Produto produto = produtoRepository.findOne(item.getProduto().getId());
@@ -34,10 +34,10 @@ public class Cancelamento implements Pedido{
 					produto.setQuantidadeEstoque(total);
 					//FIXME: Adicionar Log INFO
 					produtoRepository.save(produto);
-			}
+			}*/
 			
-			v.setStatus(StatusPedido.CANCELADO);
-			return vendaRepository.save(venda);
+			v.setStatus(pedido.getStatus());
+			return pedidoRepository.save(pedido);
 		
 	  
 	}

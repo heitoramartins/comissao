@@ -9,17 +9,17 @@ import org.springframework.stereotype.Component;
 import com.compra.business.exception.QuantidadeEstoqueExcedenteException;
 import com.compra.entity.Item;
 import com.compra.entity.Produto;
-import com.compra.entity.Venda;
+import com.compra.entity.Pedido;
 import com.compra.jdbc.repository.ItemRepository;
 import com.compra.jdbc.repository.ProdutoRepository;
-import com.compra.jdbc.repository.VendaRepository;
+import com.compra.jdbc.repository.PedidoRepository;
 
 @Component(value="emissao")
 @Configurable
-public class Emissao implements Pedido{
+public class Emissao implements NivelPedido{
 
 	@Autowired
-	private VendaRepository vendaRepository;
+	private PedidoRepository pedidoRepository;
 	
 	@Autowired
 	private ItemRepository itemRepository;
@@ -28,10 +28,10 @@ public class Emissao implements Pedido{
 	private ProdutoRepository produtoRepository;
 	
 	@Override
-	public Venda verificarPedido(Venda venda, Long id) {
+	public Pedido verificarPedido(Pedido pedido, Long id) {
 		
 		    	//FIXME: Adicionar Log INFO
-		    	Venda v = vendaRepository.findOne(id);
+		    	Pedido v = pedidoRepository.findOne(id);
 		       	for (Item item  : v.getItens()) {
 		    		//dar baixa no estoque
 		    		Integer totalEstoque = 0;
@@ -44,11 +44,11 @@ public class Emissao implements Pedido{
 		    		//FIXME: Adicionar Log INFO
 		    		itemRepository.save(item);
 		    	}
-		    	v.setStatus(venda.getStatus());
+		    	v.setStatus(pedido.getStatus());
 		    	v.setDataEntrega(LocalDateTime.now());
 		    	
 		    	//FIXME: Adicionar Log INFO
-		    	return vendaRepository.save(v);
+		    	return pedidoRepository.save(v);
 	
 	}
 

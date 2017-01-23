@@ -33,8 +33,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
-@Table(name = "venda")
-public class Venda {
+@Table(name = "pedido")
+public class Pedido {
 	
 	@Id
 	@GeneratedValue
@@ -47,7 +47,7 @@ public class Venda {
 	private Cliente cliente;
 	
 	@JsonView(Views.Public.class)
-	@OneToMany(mappedBy = "venda", targetEntity = Item.class, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "pedido", targetEntity = Item.class, fetch = FetchType.LAZY)
 	private List<Item> itens;
 	
 	@JsonSerialize(using = CustomLocalDateTimeSerializer.class)
@@ -98,7 +98,7 @@ public class Venda {
 	@Transient
 	public Desconto desconto;
 	
-	public Venda() {
+	public Pedido() {
 	    desconto = new EmAprovacao();
 	}
 		
@@ -190,16 +190,26 @@ public class Venda {
 		this.statusDesconto = statusDesconto;
 	}
 	@Transient
-	public boolean isNovo(Venda venda){
-		return venda.getId() == null;
+	public boolean isNovo(Pedido pedido){
+		return pedido.getId() == null;
 	}
 	
+		
 	@Transient
-	public BigDecimal calculaFreteMaisDescontoExtra(Venda venda, BigDecimal total){
+	public BigDecimal calculaFreteMaisDescontoExtra(Pedido pedido, BigDecimal total){
 		   BigDecimal desconto = BigDecimal.ZERO;
-		   desconto = venda.aplicaDescontoExtra(); 
-		   venda.setValorDesconto(desconto);
-		   total = total.add(total.subtract(venda.getValorDesconto()).add(venda.getValorFrete()));
+		   desconto = pedido.aplicaDescontoExtra(); 
+		   pedido.setValorDesconto(desconto);
+		   total = total.subtract(desconto).add(pedido.getValorFrete());
+		   return total.setScale(2, RoundingMode.UP);//arredondas casas decimais
+	}
+	
+	@Transient //descnto de 5% na primeira compra
+	public BigDecimal calculaFreteMaisDesconto(Pedido pedido, BigDecimal total){
+		   BigDecimal desconto = BigDecimal.ZERO;
+		   desconto = total.multiply(new BigDecimal(0.05));
+		   pedido.setValorDesconto(desconto);
+		   total = total.subtract(desconto).add(pedido.getValorFrete());
 		   return total.setScale(2, RoundingMode.UP);//arredondas casas decimais
 	}
 	

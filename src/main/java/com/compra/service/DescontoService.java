@@ -1,10 +1,16 @@
 package com.compra.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import com.compra.entity.Pedido;
+
+@Component
 public class DescontoService {
 
-	@Autowired
-	private VendaService vendaService;
+	public void aplicarDescontoExtra(Pedido pedido, Long id) {
+				
+	}
+
+	
 	
 }

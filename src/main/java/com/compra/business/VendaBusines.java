@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.compra.entity.Venda;
-import com.compra.service.VendaService;
+import com.compra.entity.Pedido;
+import com.compra.service.PedidoService;
 
 
 @Component
@@ -14,24 +14,24 @@ public class VendaBusines {
 
 
 	@Autowired
-	private VendaService vendaService;
+	private PedidoService pedidoService;
 	
-	public Long salvar(Venda venda){
-		return vendaService.salvarOrcamento(venda);
+	public Long salvar(Pedido pedido){
+		return pedidoService.salvarOrcamento(pedido);
 	}
 	
-	public List<Venda> findVendasById(Long id){
-		List<Venda> vendas = vendaService.findVendasById(id);
-		return vendas;
+	public List<Pedido> findVendasById(Long id){
+		List<Pedido> pedidos = pedidoService.findVendasById(id);
+		return pedidos;
 	}
 	
-	public List<Venda> findAll(){
-		List<Venda> vendas = vendaService.findAll();
-		return vendas;
+	public List<Pedido> findAll(){
+		List<Pedido> pedidos = pedidoService.findAll();
+		return pedidos;
 	}
 
-	public void alteraOrcamento(Venda venda, Long id) {
-		vendaService.alteraOrcamento(venda, id);
+	public void alteraOrcamento(Pedido pedido, Long id) {
+		pedidoService.alteraOrcamento(pedido, id);
 		
 	}
 	

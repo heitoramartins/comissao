@@ -19,26 +19,26 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 
 import com.compra.business.VendaBusines;
-import com.compra.entity.Venda;
+import com.compra.entity.Pedido;
 import com.compra.entity.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @RestController
-@RequestMapping(value = "/venda", produces = { MediaType.APPLICATION_JSON_VALUE })
-public class VendaController {
+@RequestMapping(value = "/pedido", produces = { MediaType.APPLICATION_JSON_VALUE })
+public class PedidoController {
 	
 	    @Autowired
 	    private VendaBusines vendaBusiness;
 	  	  	
 	    @RequestMapping(method = RequestMethod.POST)
 	    public ResponseEntity salvarOrcamento(
-	        @RequestBody Venda venda,UriComponentsBuilder uriComponentsBuilder) {
-	        Long id = vendaBusiness.salvar(venda);
+	        @RequestBody Pedido pedido,UriComponentsBuilder uriComponentsBuilder) {
+	        Long id = vendaBusiness.salvar(pedido);
 
 	        HttpHeaders headers = new HttpHeaders();
 	        headers.setLocation(uriComponentsBuilder
-	                .path("/venda")
-	                .buildAndExpand(venda, id)
+	                .path("/pedido")
+	                .buildAndExpand(pedido, id)
 	                .toUri());
 	        return new ResponseEntity(headers, CREATED);
 	    }
@@ -46,9 +46,9 @@ public class VendaController {
 	    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	    public ResponseEntity alterarOrcamento(
 	            @PathVariable("id") Long id,
-	            @RequestBody Venda venda) {
+	            @RequestBody Pedido pedido) {
 	            //FIXME: Validar campos da venda
-	    	    vendaBusiness.alteraOrcamento(venda,id);
+	    	    vendaBusiness.alteraOrcamento(pedido,id);
          return new ResponseEntity(OK);
 	    }
 	    
@@ -57,13 +57,13 @@ public class VendaController {
 	    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	    public ResponseEntity listaVendas
 	           (@PathVariable("id") Long id) {
-	        List<Venda> vendas = vendaBusiness.findVendasById(id);
-	        return new ResponseEntity(vendas, OK);
+	        List<Pedido> pedidos = vendaBusiness.findVendasById(id);
+	        return new ResponseEntity(pedidos, OK);
 	    }
 	     
 	    @JsonView(Views.Public.class)
 	    @RequestMapping(method = RequestMethod.GET)
-		public ResponseEntity<List<Venda>> listarTodas() {
+		public ResponseEntity<List<Pedido>> listarTodas() {
 			return ResponseEntity.status(HttpStatus.OK).body(vendaBusiness.findAll());
 		}
 	  
