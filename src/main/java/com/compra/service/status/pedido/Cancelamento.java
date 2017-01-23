@@ -37,6 +37,7 @@ public class Cancelamento implements NivelPedido{
 			}*/
 			
 			v.setStatus(pedido.getStatus());
+			v.setDataVenda(v.getDataVenda());
 			return pedidoRepository.save(pedido);
 		
 	  
