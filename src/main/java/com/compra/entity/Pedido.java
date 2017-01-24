@@ -193,14 +193,17 @@ public class Pedido {
 	public boolean isNovo(Pedido pedido){
 		return pedido.getId() == null;
 	}
-	
-		
+			
 	@Transient
-	public BigDecimal calculaFreteMaisDescontoExtra(Pedido pedido, BigDecimal total){
-		   BigDecimal desconto = BigDecimal.ZERO;
-		   desconto = pedido.aplicaDescontoExtra(); 
-		   pedido.setValorDesconto(desconto);
-		   total = total.subtract(desconto).add(pedido.getValorFrete());
+	public BigDecimal calculaFreteMaisDescontoExtraAprovado(Pedido pedido, BigDecimal total){
+		   BigDecimal descontoAtual = BigDecimal.ZERO;
+		   BigDecimal descontoAnterior = BigDecimal.ZERO;
+		   descontoAnterior = pedido.getValorDesconto();
+		   pedido.aplicaDescontoExtra();
+		   pedido.aprovar();
+		   descontoAtual = pedido.aplicaDescontoExtra();
+		   pedido.setValorDesconto(descontoAnterior.add(descontoAtual));
+		   total = total.subtract(pedido.getValorDesconto()).add(pedido.getValorFrete());
 		   return total.setScale(2, RoundingMode.UP);//arredondas casas decimais
 	}
 	

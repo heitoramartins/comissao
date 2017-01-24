@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.compra.business.exception.PedidoNotCreateException;
+import com.compra.business.exception.PedidoNotUpdateException;
 import com.compra.business.exception.ValorTotalMenorQueZero;
-import com.compra.business.exception.VendaNotCreateException;
-import com.compra.business.exception.VendaNotUpdateException;
 import com.compra.entity.Item;
 import com.compra.entity.Pedido;
 import com.compra.entity.enums.StatusDesconto;
@@ -80,11 +80,11 @@ public class PedidoService {
 		  return create.getId();
 		} catch (Exception e) {
 		     //FIXME: Adicionar Log ERROR
-			 throw new VendaNotCreateException("erro ao tentar criar venda!" +e.getMessage());
+			 throw new PedidoNotCreateException("erro ao tentar criar venda!" +e.getMessage());
 	   }
 	}
 		
-	@Transactional(rollbackFor = VendaNotUpdateException.class)
+	@Transactional(rollbackFor = PedidoNotUpdateException.class)
 	public void alteraOrcamento(Pedido pedido, Long id) {
 	
 		try {
@@ -95,10 +95,9 @@ public class PedidoService {
 			 }else{
 				   bf.getBean("cancelamento", NivelPedido.class).verificarPedido(pedido, id);
 			 }
-			  					
-		//FIXME: Adicionar Log ERROR
+	    //FIXME: Adicionar Log ERROR
 		} catch (Exception e) {
-			throw new VendaNotUpdateException("pedido nao pode ser atualizado" +e.getMessage());
+			throw new PedidoNotUpdateException("pedido nao pode ser atualizado" +e.getMessage());
 		}
 	}
 				

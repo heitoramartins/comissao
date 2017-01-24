@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 
-import com.compra.business.VendaBusines;
+import com.compra.business.PedidoBusines;
 import com.compra.entity.Pedido;
 import com.compra.entity.Views;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -28,12 +28,12 @@ import com.fasterxml.jackson.annotation.JsonView;
 public class PedidoController {
 	
 	    @Autowired
-	    private VendaBusines vendaBusiness;
+	    private PedidoBusines pedidoBusiness;
 	  	  	
 	    @RequestMapping(method = RequestMethod.POST)
 	    public ResponseEntity salvarOrcamento(
 	        @RequestBody Pedido pedido,UriComponentsBuilder uriComponentsBuilder) {
-	        Long id = vendaBusiness.salvar(pedido);
+	        Long id = pedidoBusiness.salvar(pedido);
 
 	        HttpHeaders headers = new HttpHeaders();
 	        headers.setLocation(uriComponentsBuilder
@@ -48,23 +48,38 @@ public class PedidoController {
 	            @PathVariable("id") Long id,
 	            @RequestBody Pedido pedido) {
 	            //FIXME: Validar campos da venda
-	    	    vendaBusiness.alteraOrcamento(pedido,id);
+	    	    pedidoBusiness.alteraOrcamento(pedido,id);
          return new ResponseEntity(OK);
 	    }
 	    
-	    
-	    @JsonView(Views.Public.class)
-	    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	    public ResponseEntity listaVendas
-	           (@PathVariable("id") Long id) {
-	        List<Pedido> pedidos = vendaBusiness.findVendasById(id);
-	        return new ResponseEntity(pedidos, OK);
+	    @RequestMapping(value = "/desconto/emissao/{id}", method = RequestMethod.PUT)
+	    public ResponseEntity emissaoPedido(
+	            @PathVariable("id") Long id) {
+	            //FIXME: Validar campos da venda
+	    	pedidoBusiness.emissaoPedido(id);
+        return new ResponseEntity(OK);
 	    }
-	     
+	    
+	    @RequestMapping(value = "/desconto/reprovado/{id}", method = RequestMethod.PUT)
+	    public ResponseEntity cancelamentoPedido(
+	            @PathVariable("id") Long id) {
+	            //FIXME: Validar campos da venda
+	    	pedidoBusiness.cancelamentoPedido(id);
+        return new ResponseEntity(OK);
+	    }
+	    
+	    @RequestMapping(value = "/desconto/finalizado/{id}", method = RequestMethod.PUT)
+	    public ResponseEntity finalizadoPedido(
+	            @PathVariable("id") Long id) {
+	            //FIXME: Validar campos da venda
+	    	pedidoBusiness.finalizadoPedido(id);
+        return new ResponseEntity(OK);
+	    }
+	  	  	     
 	    @JsonView(Views.Public.class)
 	    @RequestMapping(method = RequestMethod.GET)
 		public ResponseEntity<List<Pedido>> listarTodas() {
-			return ResponseEntity.status(HttpStatus.OK).body(vendaBusiness.findAll());
+			return ResponseEntity.status(HttpStatus.OK).body(pedidoBusiness.findAll());
 		}
 	  
 	   

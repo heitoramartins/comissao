@@ -9,7 +9,7 @@ public class Aprovado implements Desconto{
 	
 	@Override
 	public BigDecimal aplicarDescontoExtra(Pedido pedido) {
-	   return pedido.getValorTotal().multiply(new BigDecimal(0.08));		
+	   return pedido.getValorTotal().multiply(new BigDecimal(0.10));		
 	}
 	@Override
 	public void aprovar(Pedido pedido) {

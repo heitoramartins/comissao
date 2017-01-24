@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.compra.business.exception.QuantidadeEstoqueExcedenteException;
 import com.compra.entity.Item;
 import com.compra.entity.Produto;
+import com.compra.entity.enums.StatusPedido;
 import com.compra.entity.Pedido;
 import com.compra.jdbc.repository.ItemRepository;
 import com.compra.jdbc.repository.ProdutoRepository;
@@ -44,7 +45,7 @@ public class Emissao implements NivelPedido{
 		    		//FIXME: Adicionar Log INFO
 		    		itemRepository.save(item);
 		    	}
-		    	v.setStatus(pedido.getStatus());
+		    	v.setStatus(StatusPedido.EMITIDO);
 		    	v.setDataEntrega(LocalDateTime.now());
 		    	
 		    	//FIXME: Adicionar Log INFO
