@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.compra.business.exception.PedidoNotCreateException;
 import com.compra.business.exception.PedidoNotUpdateException;
 import com.compra.business.exception.ValorTotalMenorQueZero;
-import com.compra.email.MailService;
 import com.compra.entity.Item;
 import com.compra.entity.Pedido;
 import com.compra.entity.enums.StatusDesconto;
@@ -19,7 +18,7 @@ import com.compra.entity.enums.StatusPedido;
 import com.compra.jdbc.dao.PedidoDAO;
 import com.compra.jdbc.repository.ItemRepository;
 import com.compra.jdbc.repository.PedidoRepository;
-import com.compra.service.status.pedido.NivelPedido;
+import com.compra.status.pedido.NivelPedido;
 
 
 @Component
@@ -38,7 +37,7 @@ public class PedidoService {
 	private BeanFactory bf;
 	
 	@Autowired
-	MailService mailService;
+	private List<AcoesAposGerarPedido> acoes;
 	
 	@Transactional
 	public List<Pedido> listPedidosById(Long id){
@@ -76,20 +75,19 @@ public class PedidoService {
 				}
 				     totalCalculadoFreteMaisDesconto = pedido.calculaFreteMaisDesconto(pedido, total);
 					 if(pedido.isValorMenorQueZero(totalCalculadoFreteMaisDesconto)){
-					 throw new ValorTotalMenorQueZero("A lista de orcamentos deve comter amo menos um item");
+					 throw new ValorTotalMenorQueZero(" a lista de orcamentos deve comter amo menos um item! ");
 				}
 				 create.setValorTotal(totalCalculadoFreteMaisDesconto);	 
-				 
-				 //FIXME: Adicionar Log INFO
-				 pedidoRepository.save(create);
-				 //FIXME: Adicionar Log INFO
-				 mailService.sendEmail(pedido);
+				 //acoes apos gerar pedido salvar e manar email
+				 for (AcoesAposGerarPedido acoesAposGerarPedido : acoes) {
+					   acoesAposGerarPedido.executa(create);
+				 }
 				 			 
 			}
 		  return create.getId();
 		} catch (Exception e) {
 		     //FIXME: Adicionar Log ERROR
-			 throw new PedidoNotCreateException("erro ao tentar criar venda!" +e.getMessage());
+			 throw new PedidoNotCreateException(" erro ao tentar criar venda! " +e.getMessage());
 	   }
 	}
 		
@@ -106,7 +104,7 @@ public class PedidoService {
 			 }
 	    //FIXME: Adicionar Log ERROR
 		} catch (Exception e) {
-			throw new PedidoNotUpdateException("pedido nao pode ser atualizado" +e.getMessage());
+			throw new PedidoNotUpdateException(" pedido nao pode ser atualizado "  +e.getMessage());
 		}
 	}
 				

@@ -1,4 +1,4 @@
-package com.compra.service.status.desconto;
+package com.compra.status.desconto;
 
 import java.math.BigDecimal;
 
@@ -20,10 +20,8 @@ public class Reprovado implements Desconto{
 		throw new StatusInvalidoParaDescontoException("Pedido esta reprovado");
     }
 	@Override
-	public void finalizar(Pedido pedido) {
+	public void finaliza(Pedido pedido) {
 		pedido.desconto = new Finalizado();
 		
 	}
-
-	
 }

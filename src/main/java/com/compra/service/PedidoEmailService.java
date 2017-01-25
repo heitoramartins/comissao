@@ -1,4 +1,4 @@
-package com.compra.email;
+package com.compra.service;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -16,24 +16,19 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
-import com.compra.entity.Cliente;
+import com.compra.business.exception.EmailPedidoNotCreateException;
 import com.compra.entity.Pedido;
-import com.compra.jdbc.repository.ClienteRepository;
 
 @Component
-public class PedidoEmail implements MailService{
+public class PedidoEmailService{
 		
 	@Autowired
     private VelocityEngine velocityEngine;
 	
 	@Autowired
-	private ClienteRepository clienteRepository;
-	
-	@Autowired
 	private JavaMailSender javaMailSender;
 	
-	  @Override
-	  public void sendEmail(Object object) {
+	public void enviar(Object object) {
 	  Pedido pedido = (Pedido)object;
 	  MimeMessagePreparator preparator = getMessagePreparator(pedido);
 	    try {
@@ -41,7 +36,7 @@ public class PedidoEmail implements MailService{
 	    	javaMailSender.send(preparator);
 	        }
 	        catch (MailException ex) {
-	        	throw new EmailPedidoNotCreateException("Não foi possivel enviar o email!"+ex.getMessage());
+	        	throw new EmailPedidoNotCreateException(" não foi possivel enviar o email! "+ex.getMessage());
 	        }
 	    }
 	    
@@ -53,18 +48,16 @@ public class PedidoEmail implements MailService{
 					    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 					    helper.setSubject("Orcamento do pedido: "+pedido.getId());
 		                helper.setFrom("tobiasarauro@gmail.com");
-		                Cliente cliente = clienteRepository.findOne(pedido.getCliente().getId());
-		                helper.setTo(cliente.getEmail());
+		                helper.setTo("heitoramartins@gmail.com");
 		       
 		                Map<String, Object> model = new HashMap<String, Object>();
 		                model.put("pedido", pedido);
-		             /*   model.put("numberTool", new NumberTool());
-		                model.put("locale", new Locale("pt", "BR"));*/
+		                model.put("numberTool", new NumberTool());
+		                model.put("locale", new Locale("pt", "BR"));
 		                 
 		                String text = geVelocityTemplateContent(model);
 		                helper.setText(text, true);
-		               
-				}
+		       }
 			};
 			return preparator; 
 	 	         
@@ -78,10 +71,11 @@ public class PedidoEmail implements MailService{
 	            return content.toString();
 	        }catch(Exception e){
 	        	//FIXME: Adicionar Log ERROR
-	        	throw new EmailPedidoNotCreateException("Não foi possivel criar o template!"+e.getMessage());
+	        	throw new EmailPedidoNotCreateException(" não foi possivel criar o template! "+e.getMessage());
 	        }
 	    }
-	  
+
+		  
 }	
 	
 

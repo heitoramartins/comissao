@@ -1,6 +1,7 @@
 package com.compra.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,9 @@ public class DescontoService {
 	@Autowired
 	private PedidoRepository pedidoRepository;
 	
+	@Autowired
+	private List<AcoesAposGerarPedido> acoes;
+	
 	public void aplicarDescontoExtra(Long id) {
 		  BigDecimal totalMaisDescontoExtra = BigDecimal.ZERO;
 		  Pedido pedido = pedidoRepository.findOne(id);
@@ -24,12 +28,26 @@ public class DescontoService {
 			      totalMaisDescontoExtra = pedido.calculaFreteMaisDescontoExtraAprovado(pedido, pedido.getValorTotal());
 			      pedido.setValorTotal(totalMaisDescontoExtra);
                   pedido.setStatusDesconto(StatusDesconto.APROVADO);		
-		    	  pedidoRepository.save(pedido);
+		    	  
+                  //salva e manda email
+                  for (AcoesAposGerarPedido acoesAposGerarPedido : acoes) {
+					   acoesAposGerarPedido.executa(pedido);
+				}
 		  }
-		  
-		
+	}
+    
+	public void reprovarDescontoExtra(Long id) {
+		  Pedido pedido = pedidoRepository.findOne(id);
+		  if(pedido.getStatus().equals(StatusPedido.ORCAMENTO) 
+				&& pedido.getStatusDesconto().equals(StatusDesconto.EM_APROVACAO)){
+			    pedido.setStatusDesconto(StatusDesconto.REPROVADO);
+			    pedido.finaliza();
+			    //salva e manda email
+			    for (AcoesAposGerarPedido acoesAposGerarPedido : acoes) {
+					acoesAposGerarPedido.executa(pedido);
+				}
+
+		  }
 	}
 
-	
-	
 }

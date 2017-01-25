@@ -1,4 +1,4 @@
-package com.compra.service.status.pedido;
+package com.compra.status.pedido;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;

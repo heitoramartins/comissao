@@ -1,4 +1,4 @@
-package com.compra.email;
+package com.compra.business.exception;
 
 /**
  * Created by marcelo.lima on 16/09/2016.

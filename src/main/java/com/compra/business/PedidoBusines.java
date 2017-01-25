@@ -44,13 +44,9 @@ public class PedidoBusines {
 	}
 
 	public void cancelamentoPedido(Long id) {
-		// TODO Auto-generated method stub
+		descontoService.reprovarDescontoExtra(id);
 		
 	}
 
-	public void finalizadoPedido(Long id) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }

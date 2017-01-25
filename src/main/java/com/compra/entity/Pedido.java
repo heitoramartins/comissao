@@ -26,8 +26,8 @@ import com.compra.converter.CustomLocalDateTimeSerializer;
 import com.compra.entity.enums.FormaPagamento;
 import com.compra.entity.enums.StatusDesconto;
 import com.compra.entity.enums.StatusPedido;
-import com.compra.service.status.desconto.Desconto;
-import com.compra.service.status.desconto.EmAprovacao;
+import com.compra.status.desconto.Desconto;
+import com.compra.status.desconto.EmAprovacao;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -206,11 +206,11 @@ public class Pedido {
 		   total = total.subtract(pedido.getValorDesconto()).add(pedido.getValorFrete());
 		   return total.setScale(2, RoundingMode.UP);//arredondas casas decimais
 	}
-	
-	@Transient //descnto de 5% na primeira compra
+				
+	@Transient //desconto de 5% na primeira compra
 	public BigDecimal calculaFreteMaisDesconto(Pedido pedido, BigDecimal total){
 		   BigDecimal desconto = BigDecimal.ZERO;
-		   desconto = total.multiply(new BigDecimal(0.05));
+		   desconto = total.multiply(new BigDecimal(0.05)).setScale(2, RoundingMode.UP);;
 		   pedido.setValorDesconto(desconto);
 		   total = total.subtract(desconto).add(pedido.getValorFrete());
 		   return total.setScale(2, RoundingMode.UP);//arredondas casas decimais
@@ -235,15 +235,14 @@ public class Pedido {
 		 desconto.reprovar(this);
 	 }
 	 @Transient
-	 public void finalizar(){
-		 desconto.finalizar(this);
+	 public void finaliza() {
+		 desconto.finaliza(this); 
 	 }
-		
+			
 	@PrePersist
     public void prePersist() {
         this.dataVenda = LocalDateTime.now();
         
     }
-	
-					
+						
 }

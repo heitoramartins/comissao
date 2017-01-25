@@ -1,4 +1,4 @@
-package com.compra.service.validation;
+package com.compra.validation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

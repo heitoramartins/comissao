@@ -67,15 +67,7 @@ public class PedidoController {
 	    	pedidoBusiness.cancelamentoPedido(id);
         return new ResponseEntity(OK);
 	    }
-	    
-	    @RequestMapping(value = "/desconto/finalizado/{id}", method = RequestMethod.PUT)
-	    public ResponseEntity finalizadoPedido(
-	            @PathVariable("id") Long id) {
-	            //FIXME: Validar campos da venda
-	    	pedidoBusiness.finalizadoPedido(id);
-        return new ResponseEntity(OK);
-	    }
-	  	  	     
+	   	   	  	  	     
 	    @JsonView(Views.Public.class)
 	    @RequestMapping(value="/{id}",method = RequestMethod.GET)
 		public ResponseEntity<Pedido> findById(

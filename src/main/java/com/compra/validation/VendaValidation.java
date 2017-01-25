@@ -1,4 +1,4 @@
-package com.compra.service.validation;
+package com.compra.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

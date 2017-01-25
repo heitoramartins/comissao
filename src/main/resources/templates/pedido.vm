@@ -10,20 +10,20 @@
 			    <td>${pedido.status}</td>
 		     </tr>
 		     <tr>
-		        <td>Status desconto:</td>
+		        <td>Desconto extra:</td>
 			    <td>${pedido.statusDesconto}</td>
 		     </tr>
 		      <tr>
 		        <td>Desconto:</td>
-			    <td>${pedido.valorDesconto}</td>
+			    <td>$numberTool.format("¤ #0.00", $pedido.valorDesconto, $locale)</td>
 		     </tr>
 		      <tr>
 		        <td>Valor frete:</td>
-			    <td>${pedido.valorFrete}</td>
+			     <td>$numberTool.format("¤ #0.00", $pedido.valorFrete, $locale)</td>
 		     </tr>
-		      <tr>
+		       <tr>
 		        <td>Valor total:</td>
-			    <td>${pedido.valorTotal}</td>
+			    <td>$numberTool.format("¤ #0.00", $pedido.valorTotal, $locale)</td>
 		     </tr>
 	     </table>
 	     <br/>
@@ -39,10 +39,10 @@
 		<tbody>
 			<tr>
 				<td>${item.produto.nome}</td>
-				<td>${item.produto.vlrUnitario}</td>
+			    <td>$numberTool.format("¤ #0.00", $item.produto.vlrUnitario, $locale)</td>
 				<td>${item.quantidade}</td>
-				<td>${item.valorTotal}</td>
-			</tr>
+				<td>$numberTool.format("¤ #0.00", $item.valorTotal, $locale)</td>
+	     	</tr>
 		</tbody>
 		 #end
 	   #end	

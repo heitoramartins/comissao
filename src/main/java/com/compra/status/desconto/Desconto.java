@@ -1,4 +1,4 @@
-package com.compra.service.status.desconto;
+package com.compra.status.desconto;
 
 import java.math.BigDecimal;
 
@@ -8,5 +8,6 @@ public interface Desconto {
 	 BigDecimal aplicarDescontoExtra(Pedido pedido);
  	 void aprovar(Pedido pedido);
 	 void reprovar(Pedido pedido);
-	 void finalizar(Pedido pedido);
+	 void finaliza(Pedido pedido);
+
 }
