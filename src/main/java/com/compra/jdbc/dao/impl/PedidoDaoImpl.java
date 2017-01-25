@@ -31,7 +31,7 @@ public class PedidoDaoImpl implements PedidoDAO{
 	}
 		
 	@Override
-	public List<Pedido> findVendasById(Long id) {
+	public List<Pedido> listPedidosById(Long id) {
 		Query listVendas = em.createQuery("select p from Pedido p  inner join fetch p.cliente c inner join fetch p.usuario u where p.id = :id");
 		listVendas.setParameter("id", id);
 		List<Pedido> pedidos = listVendas.getResultList();

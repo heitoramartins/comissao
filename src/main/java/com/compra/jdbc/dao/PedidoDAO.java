@@ -7,7 +7,7 @@ import com.compra.entity.Pedido;
 public interface PedidoDAO {
 	
 	Pedido salvar(Pedido pedido);
-	List<Pedido> findVendasById(Long id);
+	List<Pedido> listPedidosById(Long id);
 	List<Pedido> findAll();
     Pedido findById(Long id);
 		

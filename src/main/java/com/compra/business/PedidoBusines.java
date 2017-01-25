@@ -24,8 +24,8 @@ public class PedidoBusines {
 		return pedidoService.salvarOrcamento(pedido);
 	}
 	
-	public List<Pedido> findVendasById(Long id){
-		List<Pedido> pedidos = pedidoService.findVendasById(id);
+	public List<Pedido> listPedidosById(Long id){
+		List<Pedido> pedidos = pedidoService.listPedidosById(id);
 		return pedidos;
 	}
 	

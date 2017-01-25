@@ -1,0 +1,31 @@
+<html>
+<body>
+<table>
+	  <thead>
+			<tr>
+			    <th>#ID</th>
+			    <th>CLIENTE</th>
+				<th>FORMA DE PAGAMENTO</th>
+				<th>STATUS</th>
+				<th>STATUS DESCONTO</th>
+				<th>DESCONTO</th>
+				<th>FRETE</th>
+				<th>TOTAL</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>${pedido.id}</td>
+				<td>${pedido.cliente.nome}</td>
+				<td>${pedido.formaPagamento}</td>
+				<td>${pedido.status}</td>
+				<td>${pedido.statusDesconto}</td>
+				<td>${pedido.valorDesconto}</td>
+				<td>${pedido.valorFrete}</td>
+				<td>${pedido.valorTotal}</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>
+	

@@ -11,14 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.compra.business.exception.PedidoNotCreateException;
 import com.compra.business.exception.PedidoNotUpdateException;
 import com.compra.business.exception.ValorTotalMenorQueZero;
-import com.compra.email.StepMailSender;
-import com.compra.entity.Cliente;
+import com.compra.email.MailService;
 import com.compra.entity.Item;
 import com.compra.entity.Pedido;
 import com.compra.entity.enums.StatusDesconto;
 import com.compra.entity.enums.StatusPedido;
 import com.compra.jdbc.dao.PedidoDAO;
-import com.compra.jdbc.repository.ClienteRepository;
 import com.compra.jdbc.repository.ItemRepository;
 import com.compra.jdbc.repository.PedidoRepository;
 import com.compra.service.status.pedido.NivelPedido;
@@ -37,17 +35,14 @@ public class PedidoService {
 	private ItemRepository itemRepository;
 	
 	@Autowired
-	private ClienteRepository clienteRepository;
-	
-	@Autowired
 	private BeanFactory bf;
 	
 	@Autowired
-	private StepMailSender sender;
+	MailService mailService;
 	
 	@Transactional
-	public List<Pedido> findVendasById(Long id){
-		List<Pedido> pedidos = pedidoDAO.findVendasById(id);
+	public List<Pedido> listPedidosById(Long id){
+		List<Pedido> pedidos = pedidoDAO.listPedidosById(id);
 		return pedidos;
 	}
 			
@@ -86,9 +81,9 @@ public class PedidoService {
 				 //FIXME: Adicionar Log INFO
 				 pedidoRepository.updateTotais(totalCalculadoFreteMaisDesconto, pedido.getId());
 				 
-				 //envirar email
-				 Cliente cliente = clienteRepository.findOne(pedido.getCliente().getId());
-				 sender.send(cliente.getEmail(), "Pedido de para voce", "teste juca");
+				//Pedido p = pedidoDAO.findById(pedido.getId());
+				 //FIXME: Adicionar Log INFO
+				 mailService.sendEmail(pedido);
 				 			 
 			}
 		  return create.getId();
