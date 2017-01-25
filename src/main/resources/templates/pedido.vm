@@ -1,31 +1,51 @@
 <html>
-<body>
-<table>
-	  <thead>
-			<tr>
-			    <th>#ID</th>
-			    <th>CLIENTE</th>
-				<th>FORMA DE PAGAMENTO</th>
-				<th>STATUS</th>
-				<th>STATUS DESCONTO</th>
-				<th>DESCONTO</th>
-				<th>FRETE</th>
-				<th>TOTAL</th>
-			</tr>
-		</thead>
+    <body>
+       <table>
+	        <tr>
+		        <td>Cliente:</td>
+			    <td>${pedido.cliente.nome}</td>
+		     </tr>
+		     <tr>
+		        <td>Status:</td>
+			    <td>${pedido.status}</td>
+		     </tr>
+		     <tr>
+		        <td>Status desconto:</td>
+			    <td>${pedido.statusDesconto}</td>
+		     </tr>
+		      <tr>
+		        <td>Desconto:</td>
+			    <td>${pedido.valorDesconto}</td>
+		     </tr>
+		      <tr>
+		        <td>Valor frete:</td>
+			    <td>${pedido.valorFrete}</td>
+		     </tr>
+		      <tr>
+		        <td>Valor total:</td>
+			    <td>${pedido.valorTotal}</td>
+		     </tr>
+	     </table>
+	     <br/>
+	     <table border="1" cellspacing="0" cellpadding="3">
+	 	 <tr>
+		   <th>Produto</th>
+			    <th>Valor unitário</th>
+				<th>Quantidade</th>
+				<th>Valor total</th>
+			 </tr>
+		#foreach ($item in $pedido.itens)
+		#if ($item.produto.id)
 		<tbody>
 			<tr>
-				<td>${pedido.id}</td>
-				<td>${pedido.cliente.nome}</td>
-				<td>${pedido.formaPagamento}</td>
-				<td>${pedido.status}</td>
-				<td>${pedido.statusDesconto}</td>
-				<td>${pedido.valorDesconto}</td>
-				<td>${pedido.valorFrete}</td>
-				<td>${pedido.valorTotal}</td>
+				<td>${item.produto.nome}</td>
+				<td>${item.produto.vlrUnitario}</td>
+				<td>${item.quantidade}</td>
+				<td>${item.valorTotal}</td>
 			</tr>
 		</tbody>
+		 #end
+	   #end	
 	</table>
 </body>
 </html>
-	

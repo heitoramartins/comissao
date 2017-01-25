@@ -45,11 +45,11 @@ public class PedidoService {
 		List<Pedido> pedidos = pedidoDAO.listPedidosById(id);
 		return pedidos;
 	}
-			
+	
 	@Transactional
-	public List<Pedido> findAll(){
-		List<Pedido> pedidos = pedidoDAO.findAll();
-		return pedidos;
+	public Pedido findById(Long id){
+		Pedido pedido = pedidoDAO.findById(id);
+		return pedido;
 	}
 	
 	@Transactional
@@ -68,6 +68,7 @@ public class PedidoService {
 				for (Item item  : pedido.getItens()) {
 					  item.setPedido(pedido);
 					  item.setValorUnitario(item.getProduto().getVlrUnitario());
+					  item.setValorTotal(item.calculcarTotais(item));
 					  total = total.add(item.calculcarTotais(item));
 					  //FIXME: Adicionar Log INFO
 					  itemRepository.save(item);
@@ -77,11 +78,10 @@ public class PedidoService {
 					 if(pedido.isValorMenorQueZero(totalCalculadoFreteMaisDesconto)){
 					 throw new ValorTotalMenorQueZero("A lista de orcamentos deve comter amo menos um item");
 				}
-								 
-				 //FIXME: Adicionar Log INFO
-				 pedidoRepository.updateTotais(totalCalculadoFreteMaisDesconto, pedido.getId());
+				 create.setValorTotal(totalCalculadoFreteMaisDesconto);	 
 				 
-				//Pedido p = pedidoDAO.findById(pedido.getId());
+				 //FIXME: Adicionar Log INFO
+				 pedidoRepository.save(create);
 				 //FIXME: Adicionar Log INFO
 				 mailService.sendEmail(pedido);
 				 			 

@@ -37,6 +37,9 @@ public class Item {
 	
 	@Column(name = "vlr_unitario")
 	private BigDecimal valorUnitario = BigDecimal.ZERO;
+	
+	@Column(name = "vlr_total")
+	private BigDecimal valorTotal = BigDecimal.ZERO;
 			
 	public Long getId() {
 		return id;
@@ -70,14 +73,19 @@ public class Item {
 	public void setValorUnitario(BigDecimal valorUnitario) {
 		this.valorUnitario = valorUnitario;
 	}
+		
+	public BigDecimal getValorTotal() {
+		return valorTotal;
+	}
+	public void setValorTotal(BigDecimal valorTotal) {
+		this.valorTotal = valorTotal;
+	}
 	@Transient
 	public BigDecimal calculcarTotais(Item item){
 		BigDecimal total = BigDecimal.ZERO;
 		total = total.add(item.getProduto().getVlrUnitario().multiply(new BigDecimal(item.getQuantidade())));
 		return total;
 	}
-	
-	
 		
 	
 }

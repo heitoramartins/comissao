@@ -77,9 +77,10 @@ public class PedidoController {
 	    }
 	  	  	     
 	    @JsonView(Views.Public.class)
-	    @RequestMapping(method = RequestMethod.GET)
-		public ResponseEntity<List<Pedido>> listarTodas() {
-			return ResponseEntity.status(HttpStatus.OK).body(pedidoBusiness.findAll());
+	    @RequestMapping(value="/{id}",method = RequestMethod.GET)
+		public ResponseEntity<Pedido> findById(
+				@PathVariable("id") Long id)  {
+			return ResponseEntity.status(HttpStatus.OK).body(pedidoBusiness.findById(id));
 		}
 	  
 	   

@@ -1,11 +1,13 @@
 package com.compra.email;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
 
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.tools.generic.NumberTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -56,6 +58,8 @@ public class PedidoEmail implements MailService{
 		       
 		                Map<String, Object> model = new HashMap<String, Object>();
 		                model.put("pedido", pedido);
+		             /*   model.put("numberTool", new NumberTool());
+		                model.put("locale", new Locale("pt", "BR"));*/
 		                 
 		                String text = geVelocityTemplateContent(model);
 		                helper.setText(text, true);

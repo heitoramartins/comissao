@@ -8,8 +8,7 @@ public interface PedidoDAO {
 	
 	Pedido salvar(Pedido pedido);
 	List<Pedido> listPedidosById(Long id);
-	List<Pedido> findAll();
-    Pedido findById(Long id);
+	Pedido findById(Long id);
 		
 	
 	

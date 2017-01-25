@@ -29,11 +29,11 @@ public class PedidoBusines {
 		return pedidos;
 	}
 	
-	public List<Pedido> findAll(){
-		List<Pedido> pedidos = pedidoService.findAll();
-		return pedidos;
+	public Pedido findById(Long id){
+		Pedido pedido = pedidoService.findById(id);
+		return pedido;
 	}
-
+		
 	public void alteraOrcamento(Pedido pedido, Long id) {
 		pedidoService.alteraOrcamento(pedido, id);
     }
