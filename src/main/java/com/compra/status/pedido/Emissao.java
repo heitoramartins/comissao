@@ -1,6 +1,7 @@
 package com.compra.status.pedido;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -13,6 +14,7 @@ import com.compra.entity.enums.StatusPedido;
 import com.compra.entity.Pedido;
 import com.compra.jdbc.repository.ItemRepository;
 import com.compra.jdbc.repository.ProdutoRepository;
+import com.compra.service.AcoesAposGerarPedido;
 import com.compra.jdbc.repository.PedidoRepository;
 
 @Component(value="emissao")
@@ -28,12 +30,15 @@ public class Emissao implements NivelPedido{
 	@Autowired
 	private ProdutoRepository produtoRepository;
 	
+	@Autowired
+	private List<AcoesAposGerarPedido> acoes;
+	
 	@Override
 	public Pedido verificarPedido(Pedido pedido, Long id) {
 		
 		    	//FIXME: Adicionar Log INFO
-		    	Pedido v = pedidoRepository.findOne(id);
-		       	for (Item item  : v.getItens()) {
+		    	Pedido p = pedidoRepository.findOne(id);
+		       	for (Item item  : p.getItens()) {
 		    		//dar baixa no estoque
 		    		Integer totalEstoque = 0;
 		    		Produto produto = produtoRepository.findOne(item.getProduto().getId());
@@ -45,11 +50,15 @@ public class Emissao implements NivelPedido{
 		    		//FIXME: Adicionar Log INFO
 		    		itemRepository.save(item);
 		    	}
-		    	v.setStatus(StatusPedido.EMITIDO);
-		    	v.setDataEntrega(LocalDateTime.now());
+		    	p.setStatus(StatusPedido.EMITIDO);
+		    	p.setDataEntrega(LocalDateTime.now());
 		    	
-		    	//FIXME: Adicionar Log INFO
-		    	return pedidoRepository.save(v);
+		    	
+		    	//acoes apos gerar pedido salvar e manar email
+				 for (AcoesAposGerarPedido acoesAposGerarPedido : acoes) {
+					     acoesAposGerarPedido.executa(p);
+				}
+		return p;		 
 	
 	}
 

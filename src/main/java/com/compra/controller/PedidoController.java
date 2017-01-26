@@ -52,7 +52,7 @@ public class PedidoController {
          return new ResponseEntity(OK);
 	    }
 	    
-	    @RequestMapping(value = "/desconto/emissao/{id}", method = RequestMethod.PUT)
+	    @RequestMapping(value = "/desconto/aprovado/{id}", method = RequestMethod.PUT)
 	    public ResponseEntity emissaoPedido(
 	            @PathVariable("id") Long id) {
 	            //FIXME: Validar campos da venda

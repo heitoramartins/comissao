@@ -1,6 +1,8 @@
 package com.compra.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -17,7 +19,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.compra.business.exception.EmailPedidoNotCreateException;
+import com.compra.entity.Cliente;
+import com.compra.entity.Item;
 import com.compra.entity.Pedido;
+import com.compra.entity.Produto;
+import com.compra.jdbc.repository.ClienteRepository;
+import com.compra.jdbc.repository.PedidoRepository;
+import com.compra.jdbc.repository.ProdutoRepository;
+import com.compra.vo.PedidoVO;
 
 @Component
 public class PedidoEmailService{
@@ -25,6 +34,15 @@ public class PedidoEmailService{
 	@Autowired
     private VelocityEngine velocityEngine;
 	
+	@Autowired
+    private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private PedidoRepository pedidoRepository;
+			
 	@Autowired
 	private JavaMailSender javaMailSender;
 	
@@ -42,16 +60,21 @@ public class PedidoEmailService{
 	    
 	  private MimeMessagePreparator getMessagePreparator(final Pedido pedido){
 	            MimeMessagePreparator preparator = new MimeMessagePreparator() {
+	            	            
 		       
 	    	    @Override
 				public void prepare(MimeMessage mimeMessage) throws Exception {
 					    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+					    
+					    Pedido p = pedidoRepository.findOne(pedido.getId());
+		                PedidoVO pedidoVO = criaPedidoVO(p);
+					    
 					    helper.setSubject("Orcamento do pedido: "+pedido.getId());
 		                helper.setFrom("tobiasarauro@gmail.com");
-		                helper.setTo("heitoramartins@gmail.com");
-		       
+		                helper.setTo(pedidoVO.getCliente().getEmail());
+		             	               
 		                Map<String, Object> model = new HashMap<String, Object>();
-		                model.put("pedido", pedido);
+		                model.put("pedido", pedidoVO);
 		                model.put("numberTool", new NumberTool());
 		                model.put("locale", new Locale("pt", "BR"));
 		                 
@@ -75,6 +98,36 @@ public class PedidoEmailService{
 	        }
 	    }
 
+	
+	
+	private PedidoVO criaPedidoVO(Pedido pedido){
+	
+		PedidoVO pedidoVO = new PedidoVO();
+		List<Item> itens = new ArrayList<>();
+		Item item = null;
+		for (Item i : pedido.getItens()) {
+			 item = new Item();
+			 Produto produto = produtoRepository.findOne(i.getProduto().getId());   
+			 item.setProduto(produto);
+			 item.setQuantidade(i.getQuantidade());
+			 item.setValorTotal(i.getValorTotal());
+			 itens.add(item);
+		}
+		for (Item i: itens) {
+			pedidoVO.getItens().add(i);
+		}
+		Cliente cliente = clienteRepository.findOne(pedido.getCliente().getId());
+		pedidoVO.setCliente(cliente);
+		pedidoVO.setValorTotal(pedido.getValorTotal());
+		pedidoVO.setValorFrete(pedido.getValorFrete());
+		pedidoVO.setValorDesconto(pedido.getValorDesconto());
+		pedidoVO.setStatus(pedido.getStatus());
+		pedidoVO.setStatusDesconto(pedido.getStatusDesconto());
+		pedidoVO.setFormaPagamento(pedido.getFormaPagamento());
+	  
+		return pedidoVO;
+	}
+	 
 		  
 }	
 	

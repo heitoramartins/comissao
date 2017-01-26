@@ -10,14 +10,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.compra.business.exception.PedidoNotCreateException;
 import com.compra.business.exception.PedidoNotUpdateException;
-import com.compra.business.exception.ValorTotalMenorQueZero;
 import com.compra.entity.Item;
 import com.compra.entity.Pedido;
+import com.compra.entity.Produto;
 import com.compra.entity.enums.StatusDesconto;
 import com.compra.entity.enums.StatusPedido;
 import com.compra.jdbc.dao.PedidoDAO;
 import com.compra.jdbc.repository.ItemRepository;
 import com.compra.jdbc.repository.PedidoRepository;
+import com.compra.jdbc.repository.ProdutoRepository;
 import com.compra.status.pedido.NivelPedido;
 
 
@@ -32,6 +33,9 @@ public class PedidoService {
 	
 	@Autowired
 	private ItemRepository itemRepository;
+	
+	@Autowired
+	private ProdutoRepository produtoRepository;
 	
 	@Autowired
 	private BeanFactory bf;
@@ -56,32 +60,31 @@ public class PedidoService {
 		BigDecimal total = BigDecimal.ZERO;	
 		BigDecimal totalCalculadoFreteMaisDesconto = BigDecimal.ZERO;	
 		try {
-			if(pedido.isNovo(pedido)){
-				pedido.setStatus(StatusPedido.ORCAMENTO);
-				pedido.setStatusDesconto(StatusDesconto.EM_APROVACAO);
-			}
 		    //FIXME: Adicionar Log INFO
 			Pedido create = pedidoRepository.save(pedido);
-			
 			if(pedido.getItens() != null){
 				for (Item item  : pedido.getItens()) {
+					  Produto produto = produtoRepository.findOne(item.getProduto().getId());
+					 
 					  item.setPedido(pedido);
-					  item.setValorUnitario(item.getProduto().getVlrUnitario());
-					  item.setValorTotal(item.calculcarTotais(item));
-					  total = total.add(item.calculcarTotais(item));
+					  item.setValorUnitario(produto.getVlrUnitario());
+					  item.setValorTotal(item.calculcarTotais(item, produto));
+					  total = total.add(item.calculcarTotais(item, produto));
+					 				  
 					  //FIXME: Adicionar Log INFO
 					  itemRepository.save(item);
-					 				  	
 				}
-				     totalCalculadoFreteMaisDesconto = pedido.calculaFreteMaisDesconto(pedido, total);
-					 if(pedido.isValorMenorQueZero(totalCalculadoFreteMaisDesconto)){
-					 throw new ValorTotalMenorQueZero(" a lista de orcamentos deve comter amo menos um item! ");
-				}
-				 create.setValorTotal(totalCalculadoFreteMaisDesconto);	 
+				
+				 Pedido p = pedidoRepository.findOne(pedido.getId());
+				 totalCalculadoFreteMaisDesconto = pedido.calculaFreteMaisDesconto(p, total);
+				 p.setValorTotal(totalCalculadoFreteMaisDesconto);	 
+				 p.setStatus(StatusPedido.ORCAMENTO);
+				 p.setStatusDesconto(StatusDesconto.EM_APROVACAO);
+							
 				 //acoes apos gerar pedido salvar e manar email
 				 for (AcoesAposGerarPedido acoesAposGerarPedido : acoes) {
-					   acoesAposGerarPedido.executa(create);
-				 }
+					     acoesAposGerarPedido.executa(p);
+				}
 				 			 
 			}
 		  return create.getId();
@@ -107,5 +110,8 @@ public class PedidoService {
 			throw new PedidoNotUpdateException(" pedido nao pode ser atualizado "  +e.getMessage());
 		}
 	}
+	
+	
+	
 				
 }

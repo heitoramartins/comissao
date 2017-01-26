@@ -81,10 +81,9 @@ public class Item {
 		this.valorTotal = valorTotal;
 	}
 	@Transient
-	public BigDecimal calculcarTotais(Item item){
-		BigDecimal total = BigDecimal.ZERO;
-		total = total.add(item.getProduto().getVlrUnitario().multiply(new BigDecimal(item.getQuantidade())));
-		return total;
+	public BigDecimal calculcarTotais(Item item,Produto produto){
+		return produto.getVlrUnitario().multiply(new BigDecimal(item.getQuantidade()));
+		
 	}
 		
 	
