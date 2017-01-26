@@ -1,65 +1,55 @@
-# Genie
+# Comissao
 
 
-Esse projeto tem como objetivo ser a API de lista de compras(Favoritos) unificada entre Buscapé e Bondfaro.
-
-
-###### Sistemas:
-- 2U - Sistema de Usuário Único
-- Genie - Sistema de lista de compras(Favoritos)
+Esse projeto tem como objetivo ser a API WebServices de pedidos (vendas)  
 
 ##### Premissas
-- Vamos usar o idParceiro para saber de qual site se originou o Favorito e/ou a lista de compras, evitando que os outros sistemas precisem ser cadastrado no Genie.
-- Na v0.1 vamos usar uma tabela de usuário com vida útil já definida , pois quando o 2U for criado (I hope) as listas de compras serão preenchidas com a referência para o uniqueUserId do 2U.  
-- Na v0.1 vamos usar o email como chave para buscar a lista de compras de usuários logados e o device ID para não logados.
-- Na v1.0 será mudado o recurso de usuário, no lugar de usar o email para buscar as listas do usuário, será usado o uniqueUserId do 2U.
-
+- Ao realizar uma compra o programa ira colher alguams informaçoes dos modulos ja existentes e executara calculos de descontos 
+- e enviara um email para o solicitante com os dados do seu pedido
 ---
-
-## v0.1
-Como ainda não temos o 2U e um uniqueUserId, precisamos desenvolver uma forma de associar os identificadores que temos e que são espalhados em:
-
-###### Mobile
- - device ID
-
-###### Web
-- email
-- ID vip
-- ID do login unico (person ID ou account ID)
 
 ##### Recursos
 
- - /users
- - /users/{email}
- - /users/{email}/lists
- - /users/{email}/lists/{id}
- - /users/{email}/lists/{id}/favorites
- - /users/{email}/lists/{id}/favorites/{id}
- - /devices/{deviceId}
- - /devices/{deviceId}/lists
- - /devices/{deviceId}/lists/{id}
- - /devices/{deviceId}/lists/{id}/favorites
- - /devices/{deviceId}/lists/{id}/favorites/{id}
+/pedido
+/pedido/{id}
+/pedido/desconto/aprovado/{id}
+/pedido/desconto/reprovado/{id}
 
+#### Criar Pedido
 
-#### Criar lista de compras
-
-###### Para um usuário com login único/id vip:
+- Para um pedido com usuario e clientes ja cadastrados, na primeira venda o sistema realiza um calculo inicial de  5% de desconto
+  mais o valor do frete, logo apos o pedido ser persistido um email sera enviado para o solicitante com os dados do pedido
+  obs(tabela cliente campo email "heitoramartins@gmail.com")
+###### 
 ```shell
-HTTP POST /users/fulano@gmail.com/lists
+HTTP POST localhost:8081/pedido
 ```
 ```json
-{
-  "partnerId": 2,
-  "name": "Lista de Casamento",
-  "public": true  
-}
-```
-No response temos o header Location com o caminho do recurso criado (Ex: http://localhost:8080/genie/users/fulano@gmail.com/lists/2).
 
-Com isso temos vinculado apenas email dentro do favoritos, caso tenha o email e também os dados como vipId(area vip) ou uniqueLoginId(Login Unico), pode vincular também:
+  {
+     "cliente": {"id": 2},
+     "usuario": {"id": 1},
+     "valorFrete": 20,
+     "formaPagamento": "DINHEIRO",
+    
+     "itens": [{"produto":{"id": 3}, "quantidade": 1},
+               {"produto":{"id": 1}, "quantidade": 1}],
+    
+     "enderecoEntrega": {
+     "logradouro": "Rua Jovita",
+     "numero": "25",
+     "complemento": "AP 33",
+     "cidade": "Sao Paulo",
+     "uf": "SP",
+     "cep": "02038030"
+    }
+   
+ }
+
+```
+para cnsultar o pedido registrado
 ```shell
-HTTP POST /users/fulano@gmail.com/lists
+HTTP GET localhost:8081/pedido/1
 ```
 ```json
 {
