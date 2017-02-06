@@ -3,9 +3,17 @@
 
 Esse projeto tem como objetivo ser uma API de compras 
 
+- MySqL o scripti database encontra-se comissao\src\test\resources
 
 ###### Sistemas:
 - Comissao - Sistema de lista de compras e envio de emails
+
+##### tecnologias
+- MySql 
+- SpringBoot 1.4
+- SprinData
+- Velocity
+- JPA
 
 ##### Premissas
 - Vamos usar o idCliente, IdUsuario, valorFrete, formaPagamento que podem ser DINHEIRO, CARTAO_CREDITO, CARTAO_DEBITO, CHEQUE, BOLETO_BANCARIO também teremos endereco de
@@ -14,7 +22,6 @@ Esse projeto tem como objetivo ser uma API de compras
 ---
 
 ##### Recursos
-
  - /pedido
  - /pedido/{id}
  
