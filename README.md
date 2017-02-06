@@ -14,6 +14,7 @@ Esse projeto tem como objetivo ser uma API de compras
 - SprinData
 - Velocity
 - JPA
+- Jackson
 
 ##### Premissas
 - Vamos usar o idCliente, IdUsuario, valorFrete, formaPagamento que podem ser DINHEIRO, CARTAO_CREDITO, CARTAO_DEBITO, CHEQUE, BOLETO_BANCARIO também teremos endereco de
