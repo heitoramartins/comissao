@@ -93,10 +93,9 @@ public class PedidoService {
 		
 	@Transactional(rollbackFor = PedidoNotUpdateException.class)
 	public void alteraOrcamento(Pedido pedido, Long id) {
-	
-		try {
-			
-	    //FIXME: Adicionar Log ERROR
+	   try {
+			gerarPedido.verificarPedido(pedido, id);
+		    //FIXME: Adicionar Log ERROR
 		} catch (Exception e) {
 			throw new PedidoNotUpdateException(" pedido nao pode ser atualizado "  +e.getMessage());
 		}
