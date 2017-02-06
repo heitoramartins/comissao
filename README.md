@@ -1,7 +1,7 @@
 # Comissão
 
 
-Esse projeto tem como objetivo ser uma API de compras 
+Esse projeto tem como objetivo ser uma API (WebService) de compras 
 
 - MySqL o scripti database encontra-se comissao\src\test\resources
 
