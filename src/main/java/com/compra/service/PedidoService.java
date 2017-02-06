@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.compra.business.exception.PedidoNotCreateException;
 import com.compra.business.exception.PedidoNotUpdateException;
+import com.compra.descontos.GerarDescontos;
 import com.compra.entity.Item;
 import com.compra.entity.Pedido;
 import com.compra.entity.Produto;
@@ -37,6 +38,9 @@ public class PedidoService {
 	
 	@Autowired
 	private GerarPedido gerarPedido;
+	
+	@Autowired
+	private GerarDescontos gerarDescontos;
 	
 	@Autowired
 	private List<AcoesAposGerarPedido> acoes;
@@ -74,11 +78,11 @@ public class PedidoService {
 				}
 				
 				 Pedido p = pedidoRepository.findOne(pedido.getId());
-				 totalCalculadoFreteMaisDesconto = pedido.calculaFreteMaisDesconto(p, total);
+				 totalCalculadoFreteMaisDesconto = gerarDescontos.calculaFreteMaisDesconto(p, total);
 				 p.setValorTotal(totalCalculadoFreteMaisDesconto);	 
 				 p.setStatus(StatusPedido.ORCAMENTO);
 											
-				 //acoes apos gerar pedido salvar e manar email
+				 //acoes apos gerar pedido salvar e enviar email
 				 for (AcoesAposGerarPedido acoesAposGerarPedido : acoes) {
 					     acoesAposGerarPedido.executa(p);
 				}

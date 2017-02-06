@@ -2,7 +2,7 @@ package com.compra.status;
 
 import com.compra.entity.Pedido;
 
-public abstract class Template implements RegraPedido{
+public abstract class TemplateGeracaoDePedidos implements RegraPedido{
 
 	@Override
 	public Pedido verificarPedido(Pedido pedido, Long id) {

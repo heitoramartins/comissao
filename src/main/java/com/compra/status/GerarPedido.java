@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.compra.entity.Pedido;
 
 @Component
-public class GerarPedido extends Template{
+public class GerarPedido extends TemplateGeracaoDePedidos{
 	
 	@Autowired
 	private BeanFactory bf;

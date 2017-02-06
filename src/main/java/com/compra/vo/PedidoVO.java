@@ -10,7 +10,6 @@ import com.compra.entity.EnderecoEntrega;
 import com.compra.entity.Item;
 import com.compra.entity.Usuario;
 import com.compra.entity.enums.FormaPagamento;
-import com.compra.entity.enums.StatusDesconto;
 import com.compra.entity.enums.StatusPedido;
 
 public class PedidoVO {
@@ -26,8 +25,7 @@ public class PedidoVO {
 	private BigDecimal valorFrete = BigDecimal.ZERO;
 	private BigDecimal valorDesconto = BigDecimal.ZERO;
 	private StatusPedido status = StatusPedido.ORCAMENTO;
-    private StatusDesconto statusDesconto = StatusDesconto.EM_APROVACAO;
-	private FormaPagamento formaPagamento;
+   	private FormaPagamento formaPagamento;
 	private EnderecoEntrega enderecoEntrega;
 	
 	public Long getId() {
@@ -89,12 +87,6 @@ public class PedidoVO {
 	}
 	public void setStatus(StatusPedido status) {
 		this.status = status;
-	}
-	public StatusDesconto getStatusDesconto() {
-		return statusDesconto;
-	}
-	public void setStatusDesconto(StatusDesconto statusDesconto) {
-		this.statusDesconto = statusDesconto;
 	}
 	public FormaPagamento getFormaPagamento() {
 		return formaPagamento;

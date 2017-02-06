@@ -172,6 +172,7 @@ public class Pedido {
 	public boolean isNovo(Pedido pedido){
 		return pedido.getId() == null;
 	}
+			
 	@Transient
 	public boolean isOrcamento(Pedido pedido){
 		return pedido.status.equals(StatusPedido.ORCAMENTO);
@@ -180,16 +181,7 @@ public class Pedido {
 	public boolean isCancelamento(Pedido pedido){
 		return pedido.status.equals(StatusPedido.CANCELADO);
 	}
-						
-	@Transient //desconto de 5% na primeira compra
-	public BigDecimal calculaFreteMaisDesconto(Pedido pedido, BigDecimal total){
-		   BigDecimal desconto = BigDecimal.ZERO;
-		   desconto = total.multiply(new BigDecimal(0.05)).setScale(2, RoundingMode.UP);;
-		   pedido.setValorDesconto(desconto);
-		   total = total.subtract(desconto).add(pedido.getValorFrete());
-		   return total.setScale(2, RoundingMode.UP);//arredondas casas decimais
-	}
-	
+		
 	@Transient
 	public boolean isValorMenorQueZero(BigDecimal valor){
 		return valor.compareTo(BigDecimal.ZERO) < 0;

@@ -10,10 +10,6 @@
 			    <td>${pedido.status}</td>
 		     </tr>
 		     <tr>
-		        <td>Desconto extra:</td>
-			    <td>${pedido.statusDesconto}</td>
-		     </tr>
-		      <tr>
 		        <td>Desconto:</td>
 			    <td>$numberTool.format("¤ #0.00", $pedido.valorDesconto, $locale)</td>
 		     </tr>

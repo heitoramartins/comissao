@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
 import com.compra.business.exception.ValorTotalMenorQueZero;
+import com.compra.descontos.GerarDescontos;
 import com.compra.entity.Item;
 import com.compra.entity.Pedido;
 import com.compra.entity.Produto;
@@ -31,7 +32,10 @@ public class Orcamento implements RegraPedido {
 	
 	@Autowired
 	private List<AcoesAposGerarPedido> acoes;
-
+	
+	@Autowired
+	private GerarDescontos gerarDescontos;
+	
 	@Override
 	public Pedido verificarPedido(Pedido pedido, Long id) {
 			BigDecimal total = BigDecimal.ZERO;	
@@ -54,16 +58,15 @@ public class Orcamento implements RegraPedido {
 				 itemRepository.save(i);
 			}
 			
-			totalCalculadoFreteMaisDescnto = pedido.calculaFreteMaisDesconto(p, total);
+			totalCalculadoFreteMaisDescnto = gerarDescontos.calculaFreteMaisDesconto(p, total);
 			if(pedido.isValorMenorQueZero(totalCalculadoFreteMaisDescnto)){
 			    throw new ValorTotalMenorQueZero("A lista de orcamentos deve comter amo menos um item");
 		    }
-		 			
-			p.setValorTotal(totalCalculadoFreteMaisDescnto);					
+		 								
 			p.setEnderecoEntrega(pedido.getEnderecoEntrega());					 
 			p.setCliente(pedido.getCliente());
 			p.setUsuario(pedido.getUsuario());
-			p.setValorDesconto(pedido.calculaFreteMaisDesconto(pedido, pedido.getValorTotal()));
+			p.setValorDesconto(gerarDescontos.calculaFreteMaisDesconto(pedido, pedido.getValorTotal()));
 			p.setValorFrete(pedido.getValorFrete());
 			p.setFormaPagamento(pedido.getFormaPagamento());
 			
