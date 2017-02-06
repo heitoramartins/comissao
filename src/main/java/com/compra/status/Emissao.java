@@ -1,4 +1,4 @@
-package com.compra.status.pedido;
+package com.compra.status;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,7 +19,7 @@ import com.compra.jdbc.repository.PedidoRepository;
 
 @Component(value="emissao")
 @Configurable
-public class Emissao implements NivelPedido{
+public class Emissao implements RegraPedido{
 
 	@Autowired
 	private PedidoRepository pedidoRepository;

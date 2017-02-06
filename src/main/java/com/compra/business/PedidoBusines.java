@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.compra.entity.Pedido;
-import com.compra.service.DescontoService;
 import com.compra.service.PedidoService;
 
 
@@ -16,10 +15,7 @@ public class PedidoBusines {
 
 	@Autowired
 	private PedidoService pedidoService;
-	
-	@Autowired
-	private DescontoService descontoService;
-	
+			
 	public Long salvar(Pedido pedido){
 		return pedidoService.salvarOrcamento(pedido);
 	}
@@ -38,15 +34,6 @@ public class PedidoBusines {
 		pedidoService.alteraOrcamento(pedido, id);
     }
 
-	public void emissaoPedido(Long id) {
-		descontoService.aplicarDescontoExtra(id);
-		
-	}
-
-	public void cancelamentoPedido(Long id) {
-		descontoService.reprovarDescontoExtra(id);
-		
-	}
-
+	
 	
 }

@@ -51,23 +51,7 @@ public class PedidoController {
 	    	    pedidoBusiness.alteraOrcamento(pedido,id);
          return new ResponseEntity(OK);
 	    }
-	    
-	    @RequestMapping(value = "/desconto/aprovado/{id}", method = RequestMethod.PUT)
-	    public ResponseEntity emissaoPedido(
-	            @PathVariable("id") Long id) {
-	            //FIXME: Validar campos da venda
-	    	pedidoBusiness.emissaoPedido(id);
-        return new ResponseEntity(OK);
-	    }
-	    
-	    @RequestMapping(value = "/desconto/reprovado/{id}", method = RequestMethod.PUT)
-	    public ResponseEntity cancelamentoPedido(
-	            @PathVariable("id") Long id) {
-	            //FIXME: Validar campos da venda
-	    	pedidoBusiness.cancelamentoPedido(id);
-        return new ResponseEntity(OK);
-	    }
-	   	   	  	  	     
+	   	   	   	  	  	     
 	    @JsonView(Views.Public.class)
 	    @RequestMapping(value="/{id}",method = RequestMethod.GET)
 		public ResponseEntity<Pedido> findById(

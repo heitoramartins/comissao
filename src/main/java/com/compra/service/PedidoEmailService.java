@@ -122,8 +122,7 @@ public class PedidoEmailService{
 		pedidoVO.setValorFrete(pedido.getValorFrete());
 		pedidoVO.setValorDesconto(pedido.getValorDesconto());
 		pedidoVO.setStatus(pedido.getStatus());
-		pedidoVO.setStatusDesconto(pedido.getStatusDesconto());
-		pedidoVO.setFormaPagamento(pedido.getFormaPagamento());
+    	pedidoVO.setFormaPagamento(pedido.getFormaPagamento());
 	  
 		return pedidoVO;
 	}

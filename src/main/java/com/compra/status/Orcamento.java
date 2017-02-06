@@ -1,4 +1,4 @@
-package com.compra.status.pedido;
+package com.compra.status;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,7 +18,7 @@ import com.compra.service.AcoesAposGerarPedido;
 
 @Component(value="orcamento")
 @Configurable
-public class Orcamento implements NivelPedido {
+public class Orcamento implements RegraPedido {
 	
 	@Autowired
 	private PedidoRepository pedidoRepository;
@@ -33,11 +33,11 @@ public class Orcamento implements NivelPedido {
 	private List<AcoesAposGerarPedido> acoes;
 
 	@Override
-	public Pedido verificarPedido(Pedido pedido,Long id) {
+	public Pedido verificarPedido(Pedido pedido, Long id) {
 			BigDecimal total = BigDecimal.ZERO;	
 			BigDecimal totalCalculadoFreteMaisDescnto = BigDecimal.ZERO;
 			//FIXME: Adicionar Log INFO
-			Pedido p = pedidoRepository.findOne(id);	
+			Pedido p = pedidoRepository.findOne(pedido.getId());	
 				
 			Item i = null;
 			for (Item item  : pedido.getItens()) {

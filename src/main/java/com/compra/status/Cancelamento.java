@@ -1,4 +1,4 @@
-package com.compra.status.pedido;
+package com.compra.status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -11,7 +11,7 @@ import com.compra.jdbc.repository.PedidoRepository;
 
 @Component(value="cancelamento")
 @Configurable
-public class Cancelamento implements NivelPedido{
+public class Cancelamento implements RegraPedido{
 
 	@Autowired
 	private PedidoRepository pedidoRepository;

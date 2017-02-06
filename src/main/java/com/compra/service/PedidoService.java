@@ -3,7 +3,6 @@ package com.compra.service;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,13 +12,12 @@ import com.compra.business.exception.PedidoNotUpdateException;
 import com.compra.entity.Item;
 import com.compra.entity.Pedido;
 import com.compra.entity.Produto;
-import com.compra.entity.enums.StatusDesconto;
 import com.compra.entity.enums.StatusPedido;
 import com.compra.jdbc.dao.PedidoDAO;
 import com.compra.jdbc.repository.ItemRepository;
 import com.compra.jdbc.repository.PedidoRepository;
 import com.compra.jdbc.repository.ProdutoRepository;
-import com.compra.status.pedido.NivelPedido;
+import com.compra.status.GerarPedido;
 
 
 @Component
@@ -38,7 +36,7 @@ public class PedidoService {
 	private ProdutoRepository produtoRepository;
 	
 	@Autowired
-	private BeanFactory bf;
+	private GerarPedido gerarPedido;
 	
 	@Autowired
 	private List<AcoesAposGerarPedido> acoes;
@@ -79,8 +77,7 @@ public class PedidoService {
 				 totalCalculadoFreteMaisDesconto = pedido.calculaFreteMaisDesconto(p, total);
 				 p.setValorTotal(totalCalculadoFreteMaisDesconto);	 
 				 p.setStatus(StatusPedido.ORCAMENTO);
-				 p.setStatusDesconto(StatusDesconto.EM_APROVACAO);
-							
+											
 				 //acoes apos gerar pedido salvar e manar email
 				 for (AcoesAposGerarPedido acoesAposGerarPedido : acoes) {
 					     acoesAposGerarPedido.executa(p);
@@ -98,13 +95,7 @@ public class PedidoService {
 	public void alteraOrcamento(Pedido pedido, Long id) {
 	
 		try {
-			 if(pedido.getStatus().equals(StatusPedido.ORCAMENTO)){
-		  		   bf.getBean("orcamento", NivelPedido.class).verificarPedido(pedido, id);			
-			 }else if(pedido.getStatus().equals(StatusPedido.EMITIDO)){
-				   bf.getBean("emissao", NivelPedido.class).verificarPedido(pedido, id);
-			 }else{
-				   bf.getBean("cancelamento", NivelPedido.class).verificarPedido(pedido, id);
-			 }
+			
 	    //FIXME: Adicionar Log ERROR
 		} catch (Exception e) {
 			throw new PedidoNotUpdateException(" pedido nao pode ser atualizado "  +e.getMessage());
