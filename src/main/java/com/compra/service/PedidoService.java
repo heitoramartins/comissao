@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.compra.business.exception.ItensVazioException;
 import com.compra.business.exception.PedidoNotCreateException;
+import com.compra.business.exception.PedidoNotFoundException;
 import com.compra.business.exception.PedidoNotUpdateException;
 import com.compra.descontos.GerarDescontos;
 import com.compra.entity.Item;
@@ -45,50 +47,48 @@ public class PedidoService {
 	@Autowired
 	private List<AcoesAposGerarPedido> acoes;
 	
-	@Transactional
-	public List<Pedido> listPedidosById(Long id){
-		List<Pedido> pedidos = pedidoDAO.listPedidosById(id);
-		return pedidos;
-	}
-	
+	private BigDecimal total = BigDecimal.ZERO;	
+	private BigDecimal totalCalculadoFreteMaisDesconto = BigDecimal.ZERO;	
+			
 	@Transactional
 	public Pedido findById(Long id){
-		Pedido pedido = pedidoDAO.findById(id);
-		return pedido;
+		
+			Pedido pedido = pedidoDAO.findById(id);
+			if(pedido != null){
+			 return pedido;
+			}else{
+				throw new PedidoNotFoundException("Pedido não encontrado na base ");
+		}
 	}
 	
 	@Transactional
 	public Long salvarOrcamento(Pedido pedido){
-		BigDecimal total = BigDecimal.ZERO;	
-		BigDecimal totalCalculadoFreteMaisDesconto = BigDecimal.ZERO;	
+	
 		try {
 		    //FIXME: Adicionar Log INFO
-			Pedido create = pedidoRepository.save(pedido);
-			if(pedido.getItens() != null){
-				for (Item item  : pedido.getItens()) {
-					  Produto produto = produtoRepository.findOne(item.getProduto().getId());
-					 
+			pedidoRepository.save(pedido);
+			Produto produto;
+			for (Item item  : pedido.getItens()) {
+					  produto = produtoRepository.findOne(item.getProduto().getId());
 					  item.setPedido(pedido);
 					  item.setValorUnitario(produto.getVlrUnitario());
 					  item.setValorTotal(item.calculcarTotais(item, produto));
 					  total = total.add(item.calculcarTotais(item, produto));
-					 				  
 					  //FIXME: Adicionar Log INFO
 					  itemRepository.save(item);
 				}
 				
 				 Pedido p = pedidoRepository.findOne(pedido.getId());
-				 totalCalculadoFreteMaisDesconto = gerarDescontos.calculaFreteMaisDesconto(p, total);
+				/* totalCalculadoFreteMaisDesconto = gerarDescontos.calculaFreteMaisDesconto(p, total);
 				 p.setValorTotal(totalCalculadoFreteMaisDesconto);	 
 				 p.setStatus(StatusPedido.ORCAMENTO);
 											
 				 //acoes apos gerar pedido salvar e enviar email
 				 for (AcoesAposGerarPedido acoesAposGerarPedido : acoes) {
 					     acoesAposGerarPedido.executa(p);
-				}
-				 			 
-			}
-		  return create.getId();
+				 }*/
+									
+		  return p.getId();
 		} catch (Exception e) {
 		     //FIXME: Adicionar Log ERROR
 			 throw new PedidoNotCreateException(" erro ao tentar criar venda! " +e.getMessage());
@@ -103,6 +103,14 @@ public class PedidoService {
 		} catch (Exception e) {
 			throw new PedidoNotUpdateException(" pedido nao pode ser atualizado "  +e.getMessage());
 		}
+	}
+
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public BigDecimal getTotalCalculadoFreteMaisDesconto() {
+		return totalCalculadoFreteMaisDesconto;
 	}
 	
 	

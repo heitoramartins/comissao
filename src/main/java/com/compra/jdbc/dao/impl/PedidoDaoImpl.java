@@ -22,31 +22,21 @@ public class PedidoDaoImpl implements PedidoDAO{
 	public Pedido salvar(Pedido pedido) {
 		return em.merge(pedido);
 	}
-	
-			
-	@Override
-	public List<Pedido> listPedidosById(Long id) {
-		Query listVendas = em.createQuery("select p from Pedido p  inner join fetch p.cliente c inner join fetch p.usuario u where p.id = :id");
-		listVendas.setParameter("id", id);
-		List<Pedido> pedidos = listVendas.getResultList();
-		
-	   for (Pedido pedido : pedidos) {
-		    List<Item> itens = loadItens(pedido.getId());
-		    pedido.setItens(itens);
-		}
-	 	return pedidos;
-	}
+				
 	
 	@Override
 	public Pedido findById(Long id) {
-		Query vendaQuery = em.createQuery("select p from Pedido p inner join fetch p.cliente c inner join fetch p.usuario u where p.id = :id");
-		vendaQuery.setParameter("id", id);
-		Pedido pedido  = (Pedido) vendaQuery.getSingleResult();
-		List<Item> itens = loadItens(id);
-		for (Item item : itens) {
-			pedido.getItens().add(item);
-		}
-	   	return pedido;
+	
+			Query vendaQuery = em.createQuery("select p from Pedido p inner join fetch p.cliente c inner join fetch p.usuario u where p.id = :id");
+			vendaQuery.setParameter("id", id);
+			Pedido pedido  = (Pedido) vendaQuery.getSingleResult();
+			List<Item> itens = loadItens(id);
+			for (Item item : itens) {
+				pedido.getItens().add(item);
+			}
+			return pedido;
+		
+		
 	}
 	
 	private List<Item> loadItens(Long id){

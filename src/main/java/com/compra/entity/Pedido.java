@@ -4,6 +4,7 @@ package com.compra.entity;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -86,6 +87,10 @@ public class Pedido {
 	@Embedded
 	@JsonView(Views.Public.class)
 	private EnderecoEntrega enderecoEntrega;
+	
+	public Pedido() {
+		itens = new ArrayList<>();
+	}
 				
 	public Long getId() {
 		return id;
@@ -121,10 +126,7 @@ public class Pedido {
 	public Usuario getFuncionario() {
 		return usuario;
 	}
-	public void setFuncionario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-		
+			
 	public LocalDateTime getDataEntrega() {
 		return dataEntrega;
 	}
@@ -167,7 +169,7 @@ public class Pedido {
 	public void setEnderecoEntrega(EnderecoEntrega enderecoEntrega) {
 		this.enderecoEntrega = enderecoEntrega;
 	}
-		
+			
 	@Transient
 	public boolean isNovo(Pedido pedido){
 		return pedido.getId() == null;
@@ -193,6 +195,7 @@ public class Pedido {
         this.dataVenda = LocalDateTime.now();
         
     }
+	
 	
 	
 }

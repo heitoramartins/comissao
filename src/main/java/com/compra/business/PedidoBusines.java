@@ -1,7 +1,5 @@
 package com.compra.business;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,11 +18,7 @@ public class PedidoBusines {
 		return pedidoService.salvarOrcamento(pedido);
 	}
 	
-	public List<Pedido> listPedidosById(Long id){
-		List<Pedido> pedidos = pedidoService.listPedidosById(id);
-		return pedidos;
-	}
-	
+		
 	public Pedido findById(Long id){
 		Pedido pedido = pedidoService.findById(id);
 		return pedido;
