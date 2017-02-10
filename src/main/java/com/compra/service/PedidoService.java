@@ -79,14 +79,14 @@ public class PedidoService {
 				}
 				
 				 Pedido p = pedidoRepository.findOne(pedido.getId());
-				/* totalCalculadoFreteMaisDesconto = gerarDescontos.calculaFreteMaisDesconto(p, total);
+				 totalCalculadoFreteMaisDesconto = gerarDescontos.calculaFreteMaisDesconto(p, total);
 				 p.setValorTotal(totalCalculadoFreteMaisDesconto);	 
 				 p.setStatus(StatusPedido.ORCAMENTO);
 											
 				 //acoes apos gerar pedido salvar e enviar email
 				 for (AcoesAposGerarPedido acoesAposGerarPedido : acoes) {
 					     acoesAposGerarPedido.executa(p);
-				 }*/
+				 }
 									
 		  return p.getId();
 		} catch (Exception e) {
